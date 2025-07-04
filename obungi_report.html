@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>오분기 입력 및 동적 지시 슈트 입력</title>
+  <title>오분기 입력 및 복사</title>
   <style>
     body {
       font-family: sans-serif;
@@ -79,7 +79,6 @@
     .dynamic-input-group input {
       flex: 1;
     }
-    /* 타이틀 스타일 */
     #orderTitles {
       display: flex;
       gap: 10px;
@@ -99,20 +98,17 @@
 </head>
 <body>
   <div class="container">
-    <h2>오분기 정보 입력 및 동적 지시 슈트 입력</h2>
+    <h2>오분기 정보 입력 및 복사</h2>
 
     <label for="count">오분기 건수</label>
     <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
 
-    <!-- 타이틀 추가 -->
     <div id="orderTitles">
       <div>지시 슈트 번호</div>
       <div>지시 권역</div>
     </div>
 
-    <div id="orderInputsContainer" class="dynamic-inputs">
-      <!-- 지시 슈트 번호와 권역 입력창 동적 생성 -->
-    </div>
+    <div id="orderInputsContainer" class="dynamic-inputs"></div>
 
     <label for="errorNo">오분기 슈트 번호 (사진 찍은 슈트 번호)</label>
     <input type="text" id="errorNo" placeholder="예: 4" />
@@ -127,7 +123,7 @@
     <textarea id="mentions" rows="4">@손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC]
 @권미선[평택HUB_SIOC] @홍지호 [FC자동화설비]</textarea>
 
-    <button onclick="generateText()">오분기 문구 생성</button>
+    <button onclick="copyToClipboard()">복사하기</button>
 
     <div class="output" id="outputBox"></div>
 
@@ -148,7 +144,7 @@
 
         const orderNoInput = document.createElement('input');
         orderNoInput.type = 'text';
-        orderNoInput.placeholder = `지시 슈트 번호 (잘못 나온 제품 슈트 번호) ${i + 1}`;
+        orderNoInput.placeholder = `지시 슈트 번호 ${i + 1}`;
         orderNoInput.className = 'orderNo';
 
         const orderZoneInput = document.createElement('input');
@@ -163,21 +159,9 @@
       }
     }
 
-    countInput.addEventListener('input', () => {
-      let n = parseInt(countInput.value);
-      if (isNaN(n) || n < 1) n = 1;
-      createOrderInputs(n);
-      generateText();
-    });
-
-    window.onload = () => {
-      createOrderInputs(parseInt(countInput.value) || 1);
-      generateText();
-    };
-
     function generateText() {
-      const orderNos = Array.from(document.querySelectorAll('.orderNo')).map(i => i.value.trim()).filter(v => v !== '');
-      const orderZones = Array.from(document.querySelectorAll('.orderZone')).map(i => i.value.trim()).filter(v => v !== '');
+      const orderNos = Array.from(document.querySelectorAll('.orderNo')).map(i => i.value.trim());
+      const orderZones = Array.from(document.querySelectorAll('.orderZone')).map(i => i.value.trim());
 
       const orderPairs = [];
       for (let i = 0; i < Math.max(orderNos.length, orderZones.length); i++) {
@@ -192,7 +176,6 @@
       const errorZone = document.getElementById('errorZone').value.trim();
       const time = document.getElementById('time').value.trim();
       const mentions = document.getElementById('mentions').value.trim();
-
       const count = orderPairs.length || 1;
 
       const text = `단독 오분기건 ${count}건 발생하였습니다.
@@ -205,6 +188,25 @@ ${mentions}`;
       document.getElementById('outputBox').textContent = text;
     }
 
+    function copyToClipboard() {
+      generateText();
+      const text = document.getElementById('outputBox').textContent;
+      if (!text.trim()) return alert("복사할 내용이 없습니다.");
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("복사 완료!");
+      }).catch(() => {
+        alert("복사 실패! 수동으로 복사해 주세요.");
+      });
+    }
+
+    countInput.addEventListener('input', () => {
+      let n = parseInt(countInput.value);
+      if (isNaN(n) || n < 1) n = 1;
+      createOrderInputs(n);
+      generateText();
+    });
+
     ['errorNo','errorZone','time','mentions'].forEach(id => {
       document.getElementById(id).addEventListener('input', generateText);
     });
@@ -214,6 +216,11 @@ ${mentions}`;
         generateText();
       }
     });
+
+    window.onload = () => {
+      createOrderInputs(parseInt(countInput.value) || 1);
+      generateText();
+    };
   </script>
 </body>
 </html>
