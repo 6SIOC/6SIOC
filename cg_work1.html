@@ -131,12 +131,27 @@
     <label><input type="checkbox" /> 2. 내선 PLT 체크리스트</label>
   </div>
 
+  <!-- 멘션 수정 가능 영역 추가 -->
+  <div class="input-group" style="margin-top:30px;">
+    <label for="mentionsTextarea">멘션 수정 가능 영역</label>
+    <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
+@신직호[평택HUB_분류]
+@조규준[평택HUB_분류]
+@김남일[평택 HUB _ SIOC]
+@권미선[평택HUB_SIOC]
+@정주석[평택HUB_분류]
+@표상일 [평택HUB_분류]
+@배도현 [평택HUB_출하]
+@김종학[평택HUB_출하]</textarea>
+  </div>
+
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
     const resultText = document.getElementById('resultText');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
+    const mentionsTextarea = document.getElementById('mentionsTextarea');
 
     function padNumber(num, length = 2) {
       return num.toString().padStart(length, '0');
@@ -150,7 +165,7 @@
     }
 
     copyBtn.addEventListener('click', () => {
-      const textToCopy = resultText.textContent;
+      const textToCopy = resultText.textContent + '\n\n\n' + mentionsTextarea.value;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(textToCopy).then(() => {
           copySuccess.style.display = 'block';
