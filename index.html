@@ -1,107 +1,115 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HUB 채널 카테고리</title>
-  <style>
-    body {
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background-color: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HUB 채널 선택 - 마켓컬리 스타일</title>
+<style>
+  /* 전체 배경과 폰트 */
+  body {
+    background-color: #ffffff;
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding-top: 48px;
+  }
 
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      color: #333;
-      border-bottom: 1px solid #eee;
-    }
+  /* 컨테이너 박스 */
+  .container {
+    width: 100%;
+    max-width: 440px;
+    padding: 0 24px 48px;
+  }
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+  /* 헤더 */
+  header {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #191919;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: -0.02em;
+  }
 
-    .category-button {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      margin-bottom: 16px;
-      padding: 16px 20px;
-      background-color: #5f0080;
-      color: white;
-      font-size: 18px;
-      font-weight: 500;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
+  /* 버튼 스타일 */
+  .category-button {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 18px 28px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    background-color: #5ab55e; /* 마켓컬리 그린 */
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 14px rgb(90 181 94 / 0.4);
+    text-decoration: none;
+    transition: background-color 0.25s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  }
+  .category-button:hover,
+  .category-button:focus {
+    background-color: #479947;
+    box-shadow: 0 6px 20px rgb(70 153 71 / 0.6);
+    transform: translateY(-2px);
+    outline: none;
+  }
 
-    .category-button:hover {
-      background-color: #7a1fb5;
-      transform: translateY(-2px);
-    }
+  /* 아이콘 스타일 */
+  .icon {
+    font-size: 1.7rem;
+    line-height: 1;
+    flex-shrink: 0;
+    user-select: none;
+  }
 
-    /* 계산기 a태그 버튼만 display flex, width 100% 추가 */
-    a.category-button {
-      display: flex;
-      width: 100%;
-    }
-
-    .icon {
-      width: 24px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-  </style>
+  /* a태그도 버튼처럼 보이게 */
+  a.category-button {
+    display: flex;
+  }
+</style>
 </head>
 <body>
-  <header>HUB 채널 선택</header>
+
   <div class="container">
-    <!-- 업무방 -->
+    <header>HUB 채널 선택</header>
+
     <button class="category-button" onclick="goToPage('hub_work.html')">
       <span class="icon">🚚</span> HUB 업무방
     </button>
 
-    <!-- 마감방 -->
     <button class="category-button" onclick="goToPage('hub_close.html')">
       <span class="icon">📦</span> HUB 마감방
     </button>
 
-    <!-- 부자재관리 -->
     <button class="category-button" onclick="goToPage('hub_material.html')">
       <span class="icon">🔋</span> HUB 부자재관리
     </button>
 
-    <!-- 오분기 -->
     <button class="category-button" onclick="goToPage('hub_wheelsorter.html')">
       <span class="icon">🛤️</span> HUB 오분기 (WHEELSORTER 공유)
     </button>
 
-    <!-- 물작업 -->
     <button class="category-button" onclick="goToPage('hub_sioc.html')">
       <span class="icon">💧</span> HUB 물작업 (상온 SIOC HUB 소통방)
     </button>
 
-    <!-- 계산기 (새 창 열기 제거) -->
-    <a class="category-button" href="SSG.HTML">
+    <a href="SSG.HTML" class="category-button">
       <span class="icon">🧮</span> HUB 계산기
     </a>
   </div>
 
-  <script>
-    function goToPage(url) {
-      window.location.href = url;
-    }
-  </script>
+<script>
+  function goToPage(url) {
+    window.location.href = url;
+  }
+</script>
+
 </body>
 </html>
