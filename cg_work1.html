@@ -124,14 +124,7 @@
   <button class="copy-btn" id="copyBtn">복사하기</button>
   <div id="copySuccess" class="copy-success">복사되었습니다!</div>
 
-  <!-- 체크리스트 섹션 추가 -->
-  <div class="checklist-section">
-    <h3>필요 사진 체크리스트</h3>
-    <label><input type="checkbox" /> 1. 트럭사진</label>
-    <label><input type="checkbox" /> 2. 내선 PLT 체크리스트</label>
-  </div>
-
-  <!-- 멘션 수정 가능 영역 추가 -->
+  <!-- 멘션 수정 가능 영역을 체크리스트 위로 이동 -->
   <div class="input-group" style="margin-top:30px;">
     <label for="mentionsTextarea">멘션 수정 가능 영역</label>
     <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
@@ -145,13 +138,20 @@
 @김종학[평택HUB_출하]</textarea>
   </div>
 
+  <!-- 체크리스트 섹션 추가 -->
+  <div class="checklist-section">
+    <h3>필요 사진 체크리스트</h3>
+    <label><input type="checkbox" /> 1. 트럭사진</label>
+    <label><input type="checkbox" /> 2. 내선 PLT 체크리스트</label>
+  </div>
+
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
     const resultText = document.getElementById('resultText');
+    const mentionsTextarea = document.getElementById('mentionsTextarea');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
-    const mentionsTextarea = document.getElementById('mentionsTextarea');
 
     function padNumber(num, length = 2) {
       return num.toString().padStart(length, '0');
