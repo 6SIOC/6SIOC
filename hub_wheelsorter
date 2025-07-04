@@ -64,11 +64,11 @@
   <header>오분기 선택</header>
   <div class="container">
     <button class="category-button" onclick="goToPage('normal_branch.html')">
-      <span class="icon">✅</span> 오분기 정상분기
+      <span class="icon">✅</span> 오분기
     </button>
 
     <button class="category-button" onclick="goToPage('abnormal_branch.html')">
-      <span class="icon">⚠️</span> 오분기 비정상분기
+      <span class="icon">⚠️</span> 정상분기
     </button>
   </div>
 
