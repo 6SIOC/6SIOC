@@ -25,14 +25,17 @@
       max-width: 480px;
       margin: 0 auto;
       padding: 20px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 16px; /* 버튼 사이 간격 */
     }
 
     .category-button {
       display: flex;
       align-items: center;
       gap: 12px;
-      width: 100%;
-      margin-bottom: 16px;
+      width: 100%; /* 버튼 너비 100% 고정 */
       padding: 16px 20px;
       background-color: #5f0080;
       color: white;
@@ -81,10 +84,10 @@
       <span class="icon">🛤️</span> HUB 오분기 (WHEELSORTER 공유)
     </button>
 
-    <!-- 계산기 (새 창에서 열림) -->
-    <a class="category-button" href="SSG.HTML" rel="noopener noreferrer">
+    <!-- 계산기 -->
+    <button class="category-button" onclick="goToPage('SSG.HTML')">
       <span class="icon">🧮</span> HUB 계산기
-    </a>
+    </button>
   </div>
 
   <script>
