@@ -5,78 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HUB 채널 선택 - 마켓컬리 스타일</title>
 <style>
-  /* 전체 배경과 폰트 */
+  /* 전체 바탕 */
   body {
-    background-color: #ffffff;
-    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0; padding: 0;
+    background-color: #fff;
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    padding-top: 60px;
     min-height: 100vh;
-    padding-top: 48px;
   }
 
-  /* 컨테이너 박스 */
+  /* 컨테이너 */
   .container {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     padding: 0 24px 48px;
   }
 
-  /* 헤더 */
+  /* 제목 */
   header {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #191919;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f3d1f;
     text-align: center;
-    margin-bottom: 40px;
-    letter-spacing: -0.02em;
+    margin-bottom: 56px;
+    letter-spacing: -0.03em;
   }
 
-  /* 버튼 스타일 */
+  /* 버튼 공통 */
   .category-button {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
     width: 100%;
-    padding: 18px 28px;
-    margin-bottom: 18px;
-    border-radius: 12px;
-    background-color: #5ab55e; /* 마켓컬리 그린 */
-    color: white;
-    font-size: 1.15rem;
+    padding: 18px 30px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    background-color: #5ac564;
+    color: #1f3d1f;
+    font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    box-shadow: 0 4px 14px rgb(90 181 94 / 0.4);
+    box-shadow: 0 3px 10px rgb(90 197 100 / 0.3);
     text-decoration: none;
-    transition: background-color 0.25s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.15s ease;
+    user-select: none;
   }
+
   .category-button:hover,
   .category-button:focus {
-    background-color: #479947;
-    box-shadow: 0 6px 20px rgb(70 153 71 / 0.6);
+    background-color: #3c6829;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgb(31 61 31 / 0.6);
     transform: translateY(-2px);
     outline: none;
   }
 
-  /* 아이콘 스타일 */
+  /* 아이콘 */
   .icon {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     line-height: 1;
     flex-shrink: 0;
-    user-select: none;
   }
 
-  /* a태그도 버튼처럼 보이게 */
+  /* a 태그도 버튼처럼 */
   a.category-button {
     display: flex;
   }
 </style>
 </head>
 <body>
-
   <div class="container">
     <header>HUB 채널 선택</header>
 
@@ -110,6 +113,5 @@
     window.location.href = url;
   }
 </script>
-
 </body>
 </html>
