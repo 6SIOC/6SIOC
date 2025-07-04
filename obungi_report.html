@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오분기 발생 보고</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    header {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      color: #5f0080;
+    }
+    .suit-info {
+      font-size: 14px;
+      color: #5f0080;
+      background-color: #faf5ff;
+      border: 1px solid #5f0080;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      user-select: text;
+      white-space: pre-wrap;
+      word-break: keep-all;
+    }
+    @media (max-width: 480px) {
+      .suit-info {
+        font-size: 16px;
+        padding: 14px 10px;
+        white-space: normal;
+      }
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      background-color: #f8f0ff;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f3e8ff;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      color: #5f0080;
+      font-weight: bold;
+      white-space: pre-wrap;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #5f0080;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .copy-success {
+      color: green;
+      margin-top: 8px;
+      display: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>오분기 발생 보고</header>
+
+  <!-- 슈트 번호 정보 추가 영역 -->
+  <div class="suit-info">
+    슈트 번호 참조:  
+    1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+  </div>
+
+  <div class="input-group">
+    <label for="count">오분기 건수</label>
+    <input type="number" id="count" min="1" placeholder="예: 1" />
+  </div>
+
+  <div class="input-group">
+    <label for="targetShootNum">지시 슈트 번호 (잘못나온 제품 슈트 번호)</label>
+    <input type="text" id="targetShootNum" placeholder="예: 5번" />
+  </div>
+
+  <div class="input-group">
+    <label for="targetRegion">지시 슈트 권역</label>
+    <input type="text" id="targetRegion" placeholder="예: M 권역" />
+  </div>
+
+  <div class="input-group">
+    <label for="wrongShootNum">오분기 슈트 번호 (내가 서 있는 슈트 번호)</label>
+    <input type="text" id="wrongShootNum" placeholder="예: 4번" />
+  </div>
+
+  <div class="input-group">
+    <label for="wrongRegion">오분기 슈트 권역</label>
+    <input type="text" id="wrongRegion" placeholder="예: H 권역" />
+  </div>
+
+  <div class="input-group">
+    <label for="time">발생 시각</label>
+    <input type="text" id="time" placeholder="예: 16:19 분경" />
+  </div>
+
+  <div class="input-group">
+    <label for="mentions">멘션 수정 가능 영역</label>
+    <textarea id="mentions">@손종선[평택HUB]
+@신직호[평택HUB_분류]
+@김남일[평택 HUB _ SIOC]
+@권미선[평택HUB_SIOC]
+@홍지호 [FC자동화설비]</textarea>
+  </div>
+
+  <div class="result-box" id="resultText"></div>
+
+  <button class="copy-btn" id="copyBtn">복사하기</button>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
+
+  <script>
+    const countInput = document.getElementById('count');
+    const targetShootNum = document.getElementById('targetShootNum');
+    const targetRegion = document.getElementById('targetRegion');
+    const wrongShootNum = document.getElementById('wrongShootNum');
+    const wrongRegion = document.getElementById('wrongRegion');
+    const timeInput = document.getElementById('time');
+    const mentionsTextarea = document.getElementById('mentions');
+    const resultText = document.getElementById('resultText');
+    const copyBtn = document.getElementById('copyBtn');
+    const copySuccess = document.getElementById('copySuccess');
+
+    function updateResult() {
+      const count = countInput.value || '○';
+      const targetShoot = targetShootNum.value || '○번';
+      const targetReg = targetRegion.value || '○ 권역';
+      const wrongShoot = wrongShootNum.value || '○번';
+      const wrongReg = wrongRegion.value || '○ 권역';
+      const time = timeInput.value || '○○:○○ 분경';
+
+      const result = `단독 오분기건 ${count}건 발생하였습니다.
+지시 슈트 : ${targetShoot} ${targetReg}
+오분기 슈트 : ${wrongShoot} ${wrongReg}
+발생시각 : ${time}\n\n${mentionsTextarea.value}`;
+
+      resultText.textContent = result;
+      copySuccess.style.display = 'none';
+    }
+
+    [countInput, targetShootNum, targetRegion, wrongShootNum, wrongRegion, timeInput, mentionsTextarea].forEach(el => {
+      el.addEventListener('input', updateResult);
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const text = resultText.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        copySuccess.style.display = 'block';
+        setTimeout(() => {
+          copySuccess.style.display = 'none';
+        }, 2000);
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해주세요.');
+      });
+    });
+
+    updateResult();
+  </script>
+
+</body>
+</html>
