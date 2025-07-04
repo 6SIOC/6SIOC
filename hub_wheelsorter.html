@@ -3,38 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>오분기 선택</title>
+  <title>WHEELSORTER HUB</title>
   <style>
-    body {
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background-color: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      color: #333;
-      border-bottom: 1px solid #eee;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
     .category-button {
       display: flex;
       align-items: center;
       gap: 12px;
       width: 100%;
+      margin-bottom: 16px;
       padding: 16px 20px;
       background-color: #5f0080;
       color: white;
@@ -47,12 +23,10 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       transition: background-color 0.3s ease, transform 0.2s ease;
     }
-
     .category-button:hover {
       background-color: #7a1fb5;
       transform: translateY(-2px);
     }
-
     .icon {
       width: 24px;
       height: 24px;
@@ -61,16 +35,14 @@
   </style>
 </head>
 <body>
-  <header>오분기 선택</header>
-  <div class="container">
-    <button class="category-button" onclick="goToPage('normal_branch.html')">
-      <span class="icon">✅</span> 오분기
-    </button>
 
-    <button class="category-button" onclick="goToPage('abnormal_branch.html')">
-      <span class="icon">⚠️</span> 정상분기
-    </button>
-  </div>
+  <button class="category-button" onclick="goToPage('obungi_report.html')">
+    <span class="icon">🛤️</span> 오분기
+  </button>
+
+  <button class="category-button" onclick="goToPage('jeongsang_report.html')">
+    <span class="icon">✅</span> 정상분기
+  </button>
 
   <script>
     function goToPage(url) {
