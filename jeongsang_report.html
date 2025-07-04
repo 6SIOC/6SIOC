@@ -3,180 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>정상분기 보고</title>
+  <title>정상분기 보고서 입력 (동적 지시 슈트 입력란)</title>
   <style>
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
       padding: 20px;
-      background-color: #ffffff;
+      max-width: 480px;
+      margin: auto;
       color: #333;
     }
-
-    h2 {
+    h1 {
       color: #5f0080;
+      text-align: center;
+      margin-bottom: 20px;
     }
-
     label {
-      font-weight: bold;
-      margin-top: 12px;
       display: block;
-    }
-
-    input, textarea {
-      font-size: 16px;
-      padding: 8px;
-      margin: 6px 0;
-      width: 100%;
-      max-width: 400px;
-      box-sizing: border-box;
-    }
-
-    .result-box {
-      background-color: #faf5ff;
-      border: 1px solid #5f0080;
-      padding: 15px;
-      margin-top: 20px;
-      white-space: pre-wrap;
-      font-weight: bold;
+      margin: 10px 0 5px;
+      font-weight: 600;
       color: #5f0080;
     }
-
-    button {
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+    textarea {
+      min-height: 120px;
+      background-color: #f3e8ff;
+      color: #5f0080;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #faf5ff;
+      font-size: 18px;
+      color: #5f0080;
+      white-space: pre-wrap;
+      min-height: 120px;
+      user-select: text;
+    }
+    button.copy-btn {
+      margin-top: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
       background-color: #5f0080;
       color: white;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
     }
-
-    button:hover {
+    button.copy-btn:hover {
       background-color: #7a1fb5;
     }
-
     .copy-success {
       color: green;
-      margin-top: 10px;
+      margin-top: 8px;
+      font-weight: 600;
       display: none;
-      font-weight: bold;
-    }
-
-    .suit-ref {
-      margin-bottom: 12px;
-      font-size: 15px;
-      color: #666;
-    }
-
-    .input-set {
-      margin-bottom: 16px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h2>정상분기 보고</h2>
-
-  <div class="suit-ref">※ 슈트 번호 참조:  
-    1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
-  </div>
+  <h1>정상분기 보고서 입력</h1>
 
   <label for="countInput">정상분기 건수</label>
-  <input type="number" id="countInput" min="1" max="10" placeholder="예: 3" />
+  <input type="number" id="countInput" min="1" max="10" value="1" />
 
-  <div id="suitInputs"></div>
-
-  <label for="rejInput">오분기 슈트</label>
-  <input type="text" id="rejInput" placeholder="예: 리젝" />
-
-  <label for="timeInput">발생시각</label>
-  <input type="text" id="timeInput" placeholder="예: 23:10" />
-
-  <label for="mentionInput">멘션 수정 가능 영역</label>
-  <textarea id="mentionInput" rows="5">@손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC] @홍지호 [FC자동화설비]</textarea>
-
-  <div class="result-box" id="resultText">
-정상분기건 ○건 발생하였습니다.
-지시 슈트 : ○번 ○권역 N건
-오분기 슈트 : ○○
-발생시각 : ○○:○○ 분경
-
-@손종선[평택HUB] ...
+  <div id="sheetInputsContainer">
+    <label>지시 슈트 1 (예: 2번 Y권역 1건)</label>
+    <input type="text" class="sheetInput" placeholder="예: 2번 Y권역 1건" />
   </div>
 
-  <button onclick="copyText()">복사하기</button>
+  <label for="rejectedSuitInput">오분기 슈트</label>
+  <input type="text" id="rejectedSuitInput" placeholder="예: 리젝" />
+
+  <label for="timeInput">발생 시각</label>
+  <input type="text" id="timeInput" placeholder="예: 23:10" />
+
+  <label for="mentionTextarea">멘션 (수정 가능)</label>
+  <textarea id="mentionTextarea" spellcheck="false">@손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
+@홍지호 [FC자동화설비]</textarea>
+
+  <div class="result-box" id="resultBox">
+    정상분기건 ○건 발생하였습니다.
+    지시 슈트 : ○번 ○권역 N건
+    오분기 슈트 : ○○
+    발생시각 : ○○:○○ 분경
+
+    @손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
+    @홍지호 [FC자동화설비]
+  </div>
+
+  <button class="copy-btn" id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
-  <script>
-    const countInput = document.getElementById('countInput');
-    const suitInputsDiv = document.getElementById('suitInputs');
-    const rejInput = document.getElementById('rejInput');
-    const timeInput = document.getElementById('timeInput');
-    const mentionInput = document.getElementById('mentionInput');
-    const resultText = document.getElementById('resultText');
-    const copySuccess = document.getElementById('copySuccess');
+<script>
+  const countInput = document.getElementById('countInput');
+  const sheetInputsContainer = document.getElementById('sheetInputsContainer');
+  const rejectedSuitInput = document.getElementById('rejectedSuitInput');
+  const timeInput = document.getElementById('timeInput');
+  const mentionTextarea = document.getElementById('mentionTextarea');
+  const resultBox = document.getElementById('resultBox');
+  const copyBtn = document.getElementById('copyBtn');
+  const copySuccess = document.getElementById('copySuccess');
 
-    const MAX_FIELDS = 10;
-
-    countInput.addEventListener('input', updateFields);
-    suitInputsDiv.addEventListener('input', updateResult);
-    rejInput.addEventListener('input', updateResult);
-    timeInput.addEventListener('input', updateResult);
-    mentionInput.addEventListener('input', updateResult);
-
-    function updateFields() {
-      const count = parseInt(countInput.value) || 0;
-      suitInputsDiv.innerHTML = '';
-
-      const limited = Math.min(count, MAX_FIELDS);
-      for (let i = 0; i < limited; i++) {
-        const group = document.createElement('div');
-        group.className = 'input-set';
-        group.innerHTML = `
-          <label>지시 슈트 ${i + 1}</label>
-          <input type="text" class="suitNum" placeholder="예: 2" />
-          <input type="text" class="suitRegion" placeholder="권역 예: Y" />
-          <input type="number" class="suitCount" min="1" placeholder="건수 예: 1" />
-        `;
-        suitInputsDiv.appendChild(group);
-      }
-
-      updateResult();
+  // 동적으로 지시 슈트 입력란 생성 함수
+  function createSheetInputs(num) {
+    // 현재 있는 input들 제거
+    while (sheetInputsContainer.firstChild) {
+      sheetInputsContainer.removeChild(sheetInputsContainer.firstChild);
     }
-
-    function updateResult() {
-      const count = countInput.value || '○';
-      const suitNums = suitInputsDiv.querySelectorAll('.suitNum');
-      const suitRegions = suitInputsDiv.querySelectorAll('.suitRegion');
-      const suitCounts = suitInputsDiv.querySelectorAll('.suitCount');
-
-      const details = [];
-      for (let i = 0; i < suitNums.length; i++) {
-        const num = suitNums[i].value || '○';
-        const region = suitRegions[i].value || '○';
-        const scount = suitCounts[i].value || 'N';
-        details.push(`${num}번 ${region}권역 ${scount}건`);
-      }
-
-      const suitsLine = details.length > 0 ? `지시 슈트 : ${details.join(' / ')}` : '지시 슈트 : ○번 ○권역 N건';
-      const rej = rejInput.value || '○○';
-      const time = timeInput.value || '○○:○○';
-      const mentions = mentionInput.value;
-
-      resultText.textContent = `정상분기건 ${count}건 발생하였습니다.\n${suitsLine}\n오분기 슈트 : ${rej}\n발생시각 : ${time} 분경\n\n${mentions}`;
+    for (let i = 1; i <= num; i++) {
+      const label = document.createElement('label');
+      label.textContent = `지시 슈트 ${i} (예: 2번 Y권역 1건)`;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'sheetInput';
+      input.placeholder = '예: 2번 Y권역 1건';
+      input.addEventListener('input', updateResult);
+      sheetInputsContainer.appendChild(label);
+      sheetInputsContainer.appendChild(input);
     }
+  }
 
-    function copyText() {
-      const text = resultText.textContent;
-      navigator.clipboard.writeText(text).then(() => {
+  function updateResult() {
+    const countVal = countInput.value || '○';
+
+    const sheetInputs = document.querySelectorAll('.sheetInput');
+    const filteredSheets = Array.from(sheetInputs)
+      .map(input => input.value.trim())
+      .filter(val => val.length > 0);
+
+    const sheetsStr = filteredSheets.length > 0 ? filteredSheets.join(' / ') : '○번 ○권역 N건';
+    const rejectedVal = rejectedSuitInput.value.trim() || '○○';
+    const timeVal = timeInput.value.trim() || '○○:○○';
+
+    resultBox.textContent = `정상분기건 ${countVal}건 발생하였습니다.
+지시 슈트 : ${sheetsStr}
+오분기 슈트 : ${rejectedVal}
+발생시각 : ${timeVal} 분경
+
+${mentionTextarea.value}`;
+    copySuccess.style.display = 'none';
+  }
+
+  // 최초 1개 input 생성
+  createSheetInputs(parseInt(countInput.value) || 1);
+
+  countInput.addEventListener('input', () => {
+    let val = parseInt(countInput.value);
+    if (isNaN(val) || val < 1) val = 1;
+    if (val > 10) val = 10;
+    countInput.value = val;
+    createSheetInputs(val);
+    updateResult();
+  });
+
+  rejectedSuitInput.addEventListener('input', updateResult);
+  timeInput.addEventListener('input', updateResult);
+  mentionTextarea.addEventListener('input', updateResult);
+
+  copyBtn.addEventListener('click', () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(resultBox.textContent).then(() => {
         copySuccess.style.display = 'block';
-        setTimeout(() => {
-          copySuccess.style.display = 'none';
-        }, 2000);
+        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
       });
+    } else {
+      alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
     }
+  });
 
-    updateFields();
-  </script>
+  updateResult();
+</script>
 </body>
 </html>
