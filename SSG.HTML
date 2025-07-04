@@ -149,31 +149,70 @@
       const id = group.id.replace('calc','');
       const disp = document.getElementById('display'+id);
       const txt = btn.textContent;
-      if (btn.classList.contains('clear') && txt==='C') { disp.value=''; updateResult(id,''); return; }
-      if (btn.classList.contains('clear') && txt==='←') { disp.value=disp.value.slice(0,-1); return; }
+      if (btn.classList.contains('clear') && txt==='C') {
+        disp.value='';
+        updateResult(id,'');
+        localStorage.removeItem('display'+id);
+        localStorage.removeItem('res'+id);
+        return;
+      }
+      if (btn.classList.contains('clear') && txt==='←') {
+        disp.value=disp.value.slice(0,-1);
+        localStorage.setItem('display'+id, disp.value);
+        return;
+      }
       if (btn.classList.contains('equal')) { doCalc(id); return; }
       let v=txt;
       if (v==='÷') v='/'; else if(v==='×') v='*'; else if(v==='−') v='-';
       disp.selectionStart=disp.selectionEnd=disp.value.length;
       disp.value+=v;
+      localStorage.setItem('display'+id, disp.value);
     }
+
     function doCalc(id) {
       const d=document.getElementById('display'+id);
       const expr=d.value;
       let js=expr.replace(/(\d+)%/g,'($1/100)');
       let result;
-      try { result=eval(js); result=Math.round(result*100)/100; } catch { result='오류'; }
+      try {
+        result=eval(js);
+        result=Math.round(result*100)/100;
+      } catch {
+        result='오류';
+      }
       d.value=expr+'='+result;
       updateResult(id,result);
+      localStorage.setItem('display'+id, d.value);
     }
-    function updateResult(id,val) { document.getElementById('res'+id).textContent=val; }
+
+    function updateResult(id,val) {
+      document.getElementById('res'+id).textContent=val;
+      localStorage.setItem('res'+id, val);
+    }
+
     function setup() {
+      // 저장된 값 불러오기
+      for (let i = 1; i <= 4; i++) {
+        const disp = document.getElementById('display' + i);
+        const res = document.getElementById('res' + i);
+        const savedVal = localStorage.getItem('display' + i);
+        const savedRes = localStorage.getItem('res' + i);
+        if (savedVal !== null) disp.value = savedVal;
+        if (savedRes !== null) res.textContent = savedRes;
+
+        // 입력 변화 저장 (키보드 등)
+        disp.addEventListener('input', () => {
+          localStorage.setItem('display' + i, disp.value);
+        });
+      }
+
+      // 버튼 이벤트 등록
       document.querySelectorAll('button').forEach(b=>{
-        b.addEventListener('click',handlePress);
-        b.addEventListener('touchstart',handlePress,{passive:false});
+        b.addEventListener('click', handlePress);
+        b.addEventListener('touchstart', handlePress, {passive:false});
       });
     }
-    window.onload=setup;
+    window.onload = setup;
   </script>
 
 </body>
