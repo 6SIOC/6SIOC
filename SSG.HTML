@@ -39,10 +39,12 @@
       border-radius: 8px;
       margin-bottom: 16px;
       box-sizing: border-box;
-      white-space: pre;
-      overflow-x: auto;
-      resize: none;
-      height: calc(1.8em * 3 + 20px);
+      white-space: pre-wrap;  /* 자동 줄바꿈 허용 */
+      overflow-x: visible;    /* 가로 스크롤 제거 */
+      resize: vertical;       /* 세로 리사이즈 가능 */
+      min-height: calc(1.8em * 3 + 20px);
+      max-height: 200px;
+      line-height: 1.8em;
     }
     .buttons {
       display: grid;
@@ -77,7 +79,7 @@
   <!-- 네 개의 계산기 그룹 -->
   <div class="calc-group" id="calc1">
     <h3>삼다수 2L</h3>
-    <textarea id="display1" class="display"></textarea>
+    <textarea id="display1" class="display" spellcheck="false"></textarea>
     <div class="buttons">
       <button class="clear">C</button>
       <button class="operator">%</button>
@@ -92,7 +94,7 @@
 
   <div class="calc-group" id="calc2">
     <h3>삼다수 500ML</h3>
-    <textarea id="display2" class="display"></textarea>
+    <textarea id="display2" class="display" spellcheck="false"></textarea>
     <div class="buttons">
       <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
       <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
@@ -104,7 +106,7 @@
 
   <div class="calc-group" id="calc3">
     <h3>지리산 2L</h3>
-    <textarea id="display3" class="display"></textarea>
+    <textarea id="display3" class="display" spellcheck="false"></textarea>
     <div class="buttons">
       <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
       <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
@@ -116,7 +118,7 @@
 
   <div class="calc-group" id="calc4">
     <h3>지리산 500ML</h3>
-    <textarea id="display4" class="display"></textarea>
+    <textarea id="display4" class="display" spellcheck="false"></textarea>
     <div class="buttons">
       <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
       <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
@@ -138,25 +140,29 @@
 
   <script>
     const lastPress = new WeakMap();
+
     function handlePress(e) {
       e.preventDefault();
       const btn = e.currentTarget;
       const now = Date.now();
       if (lastPress.has(btn) && now - lastPress.get(btn) < 100) return;
       lastPress.set(btn, now);
+
       const group = btn.closest('.calc-group');
       const id = group.id.replace('calc','');
       const disp = document.getElementById('display'+id);
       const txt = btn.textContent;
 
       if (btn.classList.contains('clear') && txt==='C') { 
-        disp.value=''; 
-        updateResult(id,''); 
+        disp.value = ''; 
+        updateResult(id, ''); 
+        autoResizeTextarea(disp);
         return; 
       }
       if (btn.classList.contains('clear') && txt==='←') { 
-        disp.value=disp.value.slice(0,-1); 
+        disp.value = disp.value.slice(0, -1); 
         updateResult(id, ''); 
+        autoResizeTextarea(disp);
         return; 
       }
       if (btn.classList.contains('equal')) { 
@@ -170,9 +176,10 @@
       else if (v === '×') v = 'X'; // 화면에 X 표시
       else if (v === '−') v = '-';
 
-      // 커서 끝으로 이동 후 추가
       disp.selectionStart = disp.selectionEnd = disp.value.length;
       disp.value += v;
+
+      autoResizeTextarea(disp);
     }
 
     function doCalc(id) {
@@ -188,55 +195,65 @@
       let result;
       try { 
         result = eval(js); 
-        result = Math.round(result*100)/100; 
+        result = Math.round(result * 100) / 100; 
       } catch { 
         result = '오류'; 
       }
 
       d.value = expr + '=' + result;
       updateResult(id, result);
+      autoResizeTextarea(d);
     }
 
     function updateResult(id, val) { 
       document.getElementById('res'+id).textContent = val; 
     }
 
+    function autoResizeTextarea(textarea) {
+      textarea.style.height = 'auto'; // 높이 초기화
+      textarea.style.height = textarea.scrollHeight + 'px'; // 내용에 맞게 높이 조절
+    }
+
     function setup() {
-      document.querySelectorAll('button').forEach(b=>{
+      document.querySelectorAll('button').forEach(b => {
         b.addEventListener('click', handlePress);
-        b.addEventListener('touchstart', handlePress, {passive:false});
+        b.addEventListener('touchstart', handlePress, { passive: false });
       });
 
-      // textarea 직접 수정시 자동 계산 반영
       document.querySelectorAll('.display').forEach(textarea => {
+        // 직접 입력시 *를 X로 변환, 계산 결과 자동 업데이트 및 높이 조절
         textarea.addEventListener('input', e => {
           const id = textarea.id.replace('display','');
           let expr = textarea.value;
 
-          // 화면에는 X 표시하므로 *는 없지만 혹시 입력된다면 X로 바꿔둠
-          expr = expr.replace(/\*/g, 'X');
+          // *가 있으면 X로 바꿈 (표시용)
+          if (expr.includes('*')) {
+            expr = expr.replace(/\*/g, 'X');
+            textarea.value = expr;
+          }
 
-          // 계산용에는 X → *
+          // 계산용 문자열 준비 (X -> *)
           let js = expr.replace(/X/g, '*');
-
-          // % 처리
           js = js.replace(/(\d+)%/g, '($1/100)');
 
           let result;
           try {
             result = eval(js);
-            result = Math.round(result*100)/100;
+            result = Math.round(result * 100) / 100;
           } catch {
             result = '오류';
           }
           updateResult(id, result);
+          autoResizeTextarea(textarea);
         });
+
+        // 로드 시 초기 높이 조절
+        autoResizeTextarea(textarea);
       });
     }
+
     window.onload = setup;
   </script>
 
 </body>
 </html>
-
-
