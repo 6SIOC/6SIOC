@@ -3,53 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HUB 마감방 회차 선택</title>
+  <title>6층 SIOC 마감 문구 작성</title>
   <style>
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background-color: #fff;
-      margin: 0;
-      padding: 20px;
+      margin: 20px;
+      color: #5f0080;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
       color: #333;
     }
-    header {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 30px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-      color: #5f0080;
-      text-align: center;
-    }
-    .container {
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
       max-width: 400px;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      padding: 8px 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: vertical;
     }
-    button {
-      font-size: 20px;
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #faf5ff;
+      color: #5f0080;
       font-weight: 700;
-      padding: 16px 20px;
-      border-radius: 12px;
+      user-select: text;
+      min-height: 48px;
+      white-space: pre-wrap;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+    .checkbox-group label {
+      font-weight: normal;
+      color: #333;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+    }
+    button.copy-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
       background-color: #5f0080;
       color: white;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-    button:hover {
+    button.copy-btn:hover {
       background-color: #7a1fb5;
+    }
+    .copy-success {
+      color: green;
+      margin-top: 8px;
+      font-weight: 600;
+      display: none;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <header>HUB 마감방 회차 선택</header>
-  <div class="container">
-    <button onclick="location.href='hub_close_round1.html'">1회차</button>
-    <button onclick="location.href='hub_close_round2.html'">2회차</button>
-    <button onclick="location.href='hub_close_round3.html'">3회차</button>
+  <h2>6층 SIOC 마감 문구 작성</h2>
+
+  <label>구분 선택</label>
+  <div class="checkbox-group">
+    <label><input type="checkbox" name="type" value="직배" /> 직배</label>
+    <label><input type="checkbox" name="type" value="충청" /> 충청</label>
+    <label><input type="checkbox" name="type" value="광주" /> 광주</label>
+    <label><input type="checkbox" name="type" value="제주" /> 제주</label>
+    <label><input type="checkbox" name="type" value="롯데택배" /> 롯데택배</label>
+    <label><input type="checkbox" name="type" value="CJ택배" /> CJ택배</label>
   </div>
+
+  <div id="batchGroup">
+    <label for="batchInput">회차 입력 (예: 1, 2, 3)</label>
+    <input type="number" id="batchInput" min="1" placeholder="예: 3" />
+  </div>
+
+  <label for="timeInput">시간 입력 (예: 24:09, 08:40)</label>
+  <input type="text" id="timeInput" placeholder="예: 24:09" />
+
+  <div class="result-box" id="resultText">6층 SIOC ○○ ○회차 ○○:○○ 마감입니다</div>
+
+  <label for="mentionsTextarea">멘션 수정 가능 영역</label>
+  <textarea id="mentionsTextarea" rows="6" spellcheck="false">@손종선[평택HUB] @신직호[평택HUB_분류] @조규준[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC] @정주석[평택HUB_분류] @배도현 [평택HUB_출하] @김종학[평택HUB_출하]</textarea>
+
+  <button class="copy-btn" id="copyBtn">복사하기</button>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
+
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="type"]');
+    const batchInput = document.getElementById('batchInput');
+    const timeInput = document.getElementById('timeInput');
+    const resultText = document.getElementById('resultText');
+    const mentionsTextarea = document.getElementById('mentionsTextarea');
+    const copyBtn = document.getElementById('copyBtn');
+    const copySuccess = document.getElementById('copySuccess');
+    const batchGroup = document.getElementById('batchGroup');
+
+    function getSelectedTypes() {
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      return selected;
+    }
+
+    function updateResult() {
+      const selected = getSelectedTypes();
+      const typesText = selected.length > 0 ? selected.join(', ') : '○○';
+      const time = timeInput.value.trim() || '○○:○○';
+
+      const requiresBatch = selected.some(val => !['CJ택배', '롯데택배'].includes(val));
+      if (requiresBatch) {
+        batchGroup.classList.remove('hidden');
+        const batch = batchInput.value.trim() || '○○';
+        resultText.textContent = `6층 SIOC ${typesText} ${batch}회차 ${time} 마감입니다`;
+      } else {
+        batchGroup.classList.add('hidden');
+        resultText.textContent = `6층 SIOC ${typesText} ${time} 마감입니다`;
+      }
+
+      copySuccess.style.display = 'none';
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateResult));
+    batchInput.addEventListener('input', updateResult);
+    timeInput.addEventListener('input', updateResult);
+
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = resultText.textContent + '\n\n' + mentionsTextarea.value;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          copySuccess.style.display = 'block';
+          setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+        }).catch(() => {
+          alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
+        });
+      } else {
+        alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
+      }
+    });
+
+    updateResult();
+  </script>
 </body>
 </html>
