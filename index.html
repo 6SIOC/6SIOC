@@ -41,6 +41,7 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
+      text-decoration: none;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       transition: background-color 0.3s ease, transform 0.2s ease;
     }
@@ -60,41 +61,35 @@
 <body>
   <header>HUB 채널 선택</header>
   <div class="container">
-    <!-- 업무방 버튼 -->
+    <!-- 업무방 -->
     <button class="category-button" onclick="goToPage('hub_work.html')">
-      <span class="icon">🚚</span>
-      HUB 업무방
+      <span class="icon">🚚</span> HUB 업무방
     </button>
 
     <!-- 마감방 -->
     <button class="category-button" onclick="goToPage('hub_close.html')">
-      <span class="icon">📦</span>
-      HUB 마감방
+      <span class="icon">📦</span> HUB 마감방
     </button>
 
     <!-- 부자재관리 -->
     <button class="category-button" onclick="goToPage('hub_material.html')">
-      <span class="icon">🔋</span>
-      HUB 부자재관리
+      <span class="icon">🔋</span> HUB 부자재관리
     </button>
 
     <!-- 오분기 -->
     <button class="category-button" onclick="goToPage('hub_wheelsorter.html')">
-      <span class="icon">🛤️</span>
-      HUB 오분기 (WHEELSORTER 공유)
+      <span class="icon">🛤️</span> HUB 오분기 (WHEELSORTER 공유)
     </button>
 
     <!-- 물작업 -->
     <button class="category-button" onclick="goToPage('hub_sioc.html')">
-      <span class="icon">💧</span>
-      HUB 물작업 (상온 SIOC HUB 소통방)
+      <span class="icon">💧</span> HUB 물작업 (상온 SIOC HUB 소통방)
     </button>
 
-    <!-- 계산기 추가 (수정된 부분) -->
-    <button class="category-button" onclick="goToPage('SSG.HTML')">
-      <span class="icon">🧮</span>
-      HUB 계산기
-    </button>
+    <!-- 계산기 (새 창에서 열림) -->
+    <a class="category-button" href="SSG.HTML" target="_blank" rel="noopener noreferrer">
+      <span class="icon">🧮</span> HUB 계산기
+    </a>
   </div>
 
   <script>
