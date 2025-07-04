@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>정상분기 보고서 입력 (동적 지시 슈트 입력란)</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+      color: #333;
+    }
+    h1 {
+      color: #5f0080;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #5f0080;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+    textarea {
+      min-height: 120px;
+      background-color: #f3e8ff;
+      color: #5f0080;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #faf5ff;
+      font-size: 18px;
+      color: #5f0080;
+      white-space: pre-wrap;
+      min-height: 120px;
+      user-select: text;
+    }
+    button.copy-btn {
+      margin-top: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #5f0080;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+    button.copy-btn:hover {
+      background-color: #7a1fb5;
+    }
+    .copy-success {
+      color: green;
+      margin-top: 8px;
+      font-weight: 600;
+      display: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>정상분기 보고서 입력</h1>
+
+  <label for="countInput">정상분기 건수</label>
+  <input type="number" id="countInput" min="1" max="10" value="1" />
+
+  <div id="sheetInputsContainer">
+    <label>지시 슈트 1 (예: 2번 Y권역 1건)</label>
+    <input type="text" class="sheetInput" placeholder="예: 2번 Y권역 1건" />
+  </div>
+
+  <label for="rejectedSuitInput">오분기 슈트</label>
+  <input type="text" id="rejectedSuitInput" placeholder="예: 리젝" />
+
+  <label for="timeInput">발생 시각</label>
+  <input type="text" id="timeInput" placeholder="예: 23:10" />
+
+  <label for="mentionTextarea">멘션 (수정 가능)</label>
+  <textarea id="mentionTextarea" spellcheck="false">@손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
+@홍지호 [FC자동화설비]</textarea>
+
+  <div class="result-box" id="resultBox">
+    정상분기건 ○건 발생하였습니다.
+    지시 슈트 : ○번 ○권역 N건
+    오분기 슈트 : ○○
+    발생시각 : ○○:○○ 분경
+
+    @손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
+    @홍지호 [FC자동화설비]
+  </div>
+
+  <button class="copy-btn" id="copyBtn">복사하기</button>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
+
+<script>
+  const countInput = document.getElementById('countInput');
+  const sheetInputsContainer = document.getElementById('sheetInputsContainer');
+  const rejectedSuitInput = document.getElementById('rejectedSuitInput');
+  const timeInput = document.getElementById('timeInput');
+  const mentionTextarea = document.getElementById('mentionTextarea');
+  const resultBox = document.getElementById('resultBox');
+  const copyBtn = document.getElementById('copyBtn');
+  const copySuccess = document.getElementById('copySuccess');
+
+  // 동적으로 지시 슈트 입력란 생성 함수
+  function createSheetInputs(num) {
+    // 현재 있는 input들 제거
+    while (sheetInputsContainer.firstChild) {
+      sheetInputsContainer.removeChild(sheetInputsContainer.firstChild);
+    }
+    for (let i = 1; i <= num; i++) {
+      const label = document.createElement('label');
+      label.textContent = `지시 슈트 ${i} (예: 2번 Y권역 1건)`;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'sheetInput';
+      input.placeholder = '예: 2번 Y권역 1건';
+      input.addEventListener('input', updateResult);
+      sheetInputsContainer.appendChild(label);
+      sheetInputsContainer.appendChild(input);
+    }
+  }
+
+  function updateResult() {
+    const countVal = countInput.value || '○';
+
+    const sheetInputs = document.querySelectorAll('.sheetInput');
+    const filteredSheets = Array.from(sheetInputs)
+      .map(input => input.value.trim())
+      .filter(val => val.length > 0);
+
+    const sheetsStr = filteredSheets.length > 0 ? filteredSheets.join(' / ') : '○번 ○권역 N건';
+    const rejectedVal = rejectedSuitInput.value.trim() || '○○';
+    const timeVal = timeInput.value.trim() || '○○:○○';
+
+    resultBox.textContent = `정상분기건 ${countVal}건 발생하였습니다.
+지시 슈트 : ${sheetsStr}
+오분기 슈트 : ${rejectedVal}
+발생시각 : ${timeVal} 분경
+
+${mentionTextarea.value}`;
+    copySuccess.style.display = 'none';
+  }
+
+  // 최초 1개 input 생성
+  createSheetInputs(parseInt(countInput.value) || 1);
+
+  countInput.addEventListener('input', () => {
+    let val = parseInt(countInput.value);
+    if (isNaN(val) || val < 1) val = 1;
+    if (val > 10) val = 10;
+    countInput.value = val;
+    createSheetInputs(val);
+    updateResult();
+  });
+
+  rejectedSuitInput.addEventListener('input', updateResult);
+  timeInput.addEventListener('input', updateResult);
+  mentionTextarea.addEventListener('input', updateResult);
+
+  copyBtn.addEventListener('click', () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(resultBox.textContent).then(() => {
+        copySuccess.style.display = 'block';
+        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
+      });
+    } else {
+      alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
+    }
+  });
+
+  updateResult();
+</script>
+</body>
+</html>
