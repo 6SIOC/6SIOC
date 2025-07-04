@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUB 업무방 - 회차 선택</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 1px solid #eee;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .round-button {
+      display: block;
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      background-color: #5f0080;
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .round-button:hover {
+      background-color: #7a1fb5;
+      transform: translateY(-2px);
+    }
+
+    .back-button {
+      margin-bottom: 24px;
+      font-size: 16px;
+      background-color: #e0e0e0;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>HUB 업무방</header>
+  <div class="container">
+    <button class="round-button back-button" onclick="goBack()">← 뒤로가기</button>
+
+    <button class="round-button" onclick="goToRound('round1.html')">1회차 업무</button>
+    <button class="round-button" onclick="goToRound('round2.html')">2회차 업무</button>
+    <button class="round-button" onclick="goToRound('round3.html')">3회차 업무</button>
+  </div>
+
+  <script>
+    function goToRound(url) {
+      window.location.href = url;
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

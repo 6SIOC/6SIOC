@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUB 채널 카테고리</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 1px solid #eee;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .category-button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 16px 20px;
+      background-color: #5f0080;
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .category-button:hover {
+      background-color: #7a1fb5;
+      transform: translateY(-2px);
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>HUB 채널 선택</header>
+  <div class="container">
+    <!-- 업무방 버튼 -->
+    <button class="category-button" onclick="goToPage('hub_work.html')">
+      <span class="icon">🚚</span>
+      HUB 업무방
+    </button>
+
+    <!-- 마감방 -->
+    <button class="category-button" onclick="goToPage('hub_close.html')">
+      <span class="icon">📦</span>
+      HUB 마감방
+    </button>
+
+    <!-- 부자재관리 -->
+    <button class="category-button" onclick="goToPage('hub_material.html')">
+      <span class="icon">🔋</span>
+      HUB 부자재관리
+    </button>
+
+    <!-- 오분기 -->
+    <button class="category-button" onclick="goToPage('hub_wheelsorter.html')">
+      <span class="icon">🛤️</span>
+      HUB 오분기 (WHEELSORTER 공유)
+    </button>
+
+    <!-- 물작업 -->
+    <button class="category-button" onclick="goToPage('hub_sioc.html')">
+      <span class="icon">💧</span>
+      HUB 물작업 (상온 SIOC HUB 소통방)
+    </button>
+
+    <!-- 계산기 추가 (수정된 부분) -->
+    <button class="category-button" onclick="goToPage('SSG.HTML')">
+      <span class="icon">🧮</span>
+      HUB 계산기
+    </button>
+  </div>
+
+  <script>
+    function goToPage(url) {
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>

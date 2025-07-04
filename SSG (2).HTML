@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>상품별 계산기</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0; }
+    h1 { text-align: center; margin-bottom: 30px; }
+    .calc-group { max-width: 360px; margin: 0 auto 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; }
+    .calc-group h3 { text-align: center; margin-bottom: 16px; }
+    .display { width: 100%; font-size: 1.8em; font-weight: bold; padding: 10px 20px; text-align: left; border: none; background: #f0f0f0; border: 2px solid #4caf50; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; white-space: pre; overflow-x: auto; resize: none; height: calc(1.8em*3 + 20px); }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    button { font-size: 1.4em; padding: 18px; border: none; border-radius: 10px; background-color: #e0e0e0; color: #000; cursor: pointer; user-select: none; touch-action: manipulation; transition: background-color 0.2s ease; }
+    button.operator { background-color: #4caf50; color: white; }
+    button.clear { background-color: #f44336; color: white; }
+    button.equal { background-color: #2196f3; color: white; grid-column: 4; }
+    button.zero { grid-column: span 2; }
+    table { width: 100%; max-width: 360px; margin: 20px auto 10px auto; border-collapse: collapse; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; box-sizing: border-box; }
+    th, td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+    th { background-color: #eee; }
+    #saveBtn { display: block; margin: 10px auto 40px auto; padding: 12px 24px; font-size: 1.2em; background-color: #00796b; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #saveBtn:hover { background-color: #005a4f; }
+  </style>
+  <!-- html2canvas 라이브러리 불러오기 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <h1>삼성 스타일 상품별 계산기</h1>
+
+  <!-- 계산기 그룹 -->
+  <div class="calc-group" id="calc1">
+    <h3>삼다수 2L</h3>
+    <textarea id="display1" class="display"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+  <div class="calc-group" id="calc2">
+    <h3>삼다수 500ML</h3>
+    <textarea id="display2" class="display"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+  <div class="calc-group" id="calc3">
+    <h3>지리산 2L</h3>
+    <textarea id="display3" class="display"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+  <div class="calc-group" id="calc4">
+    <h3>지리산 500ML</h3>
+    <textarea id="display4" class="display"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+
+  <!-- 결과 표 및 저장 버튼 -->
+  <table id="resultTable">
+    <thead><tr><th>상품</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>삼다수 2L</td><td id="res1"></td></tr>
+      <tr><td>삼다수 500ML</td><td id="res2"></td></tr>
+      <tr><td>지리산 2L</td><td id="res3"></td></tr>
+      <tr><td>지리산 500ML</td><td id="res4"></td></tr>
+    </tbody>
+  </table>
+  <button id="saveBtn">표 저장</button>
+
+  <script>
+    const lastPress=new WeakMap();
+    function handlePress(e){e.preventDefault();const b=e.currentTarget,n=Date.now();if(lastPress.has(b)&&n-lastPress.get(b)<100)return;lastPress.set(b,n);const group=b.closest('.calc-group'),id=group.id.replace('calc',''),d=document.getElementById('display'+id),t=b.textContent;if(b.classList.contains('clear')&&t==='C'){d.value='';updateResult(id,'');return;}if(b.classList.contains('clear')&&t==='←'){d.value=d.value.slice(0,-1);return;}if(b.classList.contains('equal')){doCalc(id);return;}let v=t;if(v==='÷')v='/';else if(v==='×')v='*';else if(v==='−')v='-';d.selectionStart=d.selectionEnd=d.value.length;d.value+=v;}
+    function doCalc(id){const d=document.getElementById('display'+id),expr=d.value,js=expr.replace(/(\d+)%/g,'($1/100)'),r=(()=>{try{let x=eval(js);return Math.round(x*100)/100}catch{return'오류';}})();d.value=expr+'='+r;updateResult(id,r);}
+    function updateResult(id,v){document.getElementById('res'+id).textContent=v;}
+    function setup(){document.querySelectorAll('button').forEach(b=>{b.addEventListener('click',handlePress);b.addEventListener('touchstart',handlePress,{passive:false});});
+      // 표 저장 기능 등록
+      const saveBtn = document.getElementById('saveBtn');
+      function saveTable() {
+        html2canvas(document.getElementById('resultTable')).then(canvas => {
+          canvas.toBlob(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'result.jpg';
+            link.click();
+          }, 'image/jpeg');
+        });
+      }
+      saveBtn.addEventListener('click', saveTable);
+      saveBtn.addEventListener('touchstart', e => { e.preventDefault(); saveTable(); }, { passive: false });
+      });
+    }
+    window.onload=setup;
+  </script>
+
+</body>
+</html>

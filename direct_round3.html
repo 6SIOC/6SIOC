@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>6층 SIOC 직배 3회차</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      padding: 20px;
+      background: #fff;
+      color: #333;
+    }
+    h2 {
+      color: #5f0080;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 160px;
+      resize: vertical;
+    }
+    .output {
+      margin-top: 20px;
+      background: #f9f0ff;
+      border: 1px solid #bba0d3;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 17px;
+      white-space: pre-wrap;
+      color: #5f0080;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      padding: 10px 16px;
+      background: #5f0080;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .section {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h2>6층 SIOC 직배 3회차 작업 안내</h2>
+
+  <div class="input-group">
+    <label>P 입력</label>
+    <input type="number" id="pValue" placeholder="예: 15">
+  </div>
+
+  <div class="input-group">
+    <label>시간 입력</label>
+    <input type="text" id="timeValue" placeholder="예: 09:10">
+  </div>
+
+  <div class="input-group">
+    <label>멘션 수정</label>
+    <textarea id="mentionBox">@손종선[평택HUB]  
+@신직호[평택HUB_분류]  
+@조규준[평택HUB_분류]  
+@김남일[평택 HUB _ SIOC]  
+@권미선[평택HUB_SIOC]  
+@정주석[평택HUB_분류]  
+@표상일 [평택HUB_분류]  
+@배도현 [평택HUB_출하]  
+@김종학[평택HUB_출하]</textarea>
+  </div>
+
+  <div class="output" id="resultBox"></div>
+  <button class="copy-btn" onclick="copyText()">복사하기</button>
+
+  <div class="section">
+    <h3>✅ 필요 사진 체크리스트</h3>
+    <label><input type="checkbox"> 트럭사진</label><br>
+    <label><input type="checkbox"> 내선 PLT 체크리스트</label>
+  </div>
+
+  <script>
+    const pValue = document.getElementById("pValue");
+    const timeValue = document.getElementById("timeValue");
+    const mentionBox = document.getElementById("mentionBox");
+    const resultBox = document.getElementById("resultBox");
+
+    function updateText() {
+      const p = pValue.value ? `${pValue.value}P` : '○○P';
+      const t = timeValue.value || '○○:○○';
+      const mention = mentionBox.value.trim();
+      resultBox.textContent = `6층 SIOC 직배 3회차 ${p} 상차후 ${t} 1층으로 내려갑니다.\n\n\n${mention}`;
+    }
+
+    function copyText() {
+      navigator.clipboard.writeText(resultBox.textContent)
+        .then(() => alert("복사되었습니다!"))
+        .catch(() => alert("복사 실패. 수동 복사해주세요."));
+    }
+
+    pValue.addEventListener('input', updateText);
+    timeValue.addEventListener('input', updateText);
+    mentionBox.addEventListener('input', updateText);
+
+    updateText();
+  </script>
+</body>
+</html>
