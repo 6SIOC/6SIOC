@@ -2,195 +2,218 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>오분기 발생 보고</title>
+  <title>오분기 입력 및 동적 지시 슈트 입력</title>
   <style>
     body {
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background-color: #fff;
-      margin: 0;
+      font-family: sans-serif;
+      background: #f9f9f9;
+      padding: 30px;
+    }
+    .container {
+      background: white;
       padding: 20px;
-      color: #333;
-    }
-    header {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-      color: #5f0080;
-    }
-    .suit-info {
-      font-size: 14px;
-      color: #5f0080;
-      background-color: #faf5ff;
-      border: 1px solid #5f0080;
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 20px;
-      line-height: 1.5;
-      user-select: text;
-      white-space: pre-wrap;
-      word-break: keep-all;
-    }
-    @media (max-width: 480px) {
-      .suit-info {
-        font-size: 16px;
-        padding: 14px 10px;
-        white-space: normal;
-      }
-    }
-    .input-group {
-      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: auto;
     }
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
+      margin: 12px 0 4px;
+      font-weight: bold;
     }
     input, textarea {
       width: 100%;
-      padding: 10px;
-      font-size: 16px;
+      padding: 8px;
+      font-size: 1em;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
-      font-family: inherit;
+      margin-bottom: 8px;
     }
     textarea {
       resize: vertical;
-      min-height: 120px;
-      background-color: #f8f0ff;
+      min-height: 80px;
+      font-family: inherit;
     }
-    .result-box {
+    button {
       margin-top: 20px;
-      padding: 15px;
-      background-color: #f3e8ff;
-      border: 1px solid #5f0080;
-      border-radius: 8px;
-      color: #5f0080;
-      font-weight: bold;
-      white-space: pre-wrap;
-    }
-    .copy-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
       background-color: #5f0080;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    .copy-success {
-      color: green;
-      margin-top: 8px;
-      display: none;
-      font-weight: 600;
+    .output {
+      margin-top: 30px;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
+      white-space: pre-line;
+      font-family: monospace;
+      min-height: 140px;
+      user-select: text;
+    }
+    .suit-reference {
+      margin-top: 12px;
+      padding: 10px 15px;
+      background-color: #f0e6ff;
+      border: 2px solid #5f0080;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #3a0066;
+      user-select: text;
+      line-height: 1.4;
+    }
+    .dynamic-inputs {
+      margin-bottom: 20px;
+    }
+    .dynamic-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .dynamic-input-group input {
+      flex: 1;
+    }
+    /* 타이틀 스타일 */
+    #orderTitles {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #333;
+      border-bottom: 2px solid #5f0080;
+      padding-bottom: 4px;
+      user-select: none;
+    }
+    #orderTitles > div {
+      flex: 1;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h2>오분기 정보 입력 및 동적 지시 슈트 입력</h2>
 
-  <header>오분기 발생 보고</header>
-
-  <!-- 슈트 번호 정보 추가 영역 -->
-  <div class="suit-info">
-    슈트 번호 참조:  
-    1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
-  </div>
-
-  <div class="input-group">
     <label for="count">오분기 건수</label>
-    <input type="number" id="count" min="1" placeholder="예: 1" />
+    <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
+
+    <!-- 타이틀 추가 -->
+    <div id="orderTitles">
+      <div>지시 슈트 번호</div>
+      <div>지시 권역</div>
+    </div>
+
+    <div id="orderInputsContainer" class="dynamic-inputs">
+      <!-- 지시 슈트 번호와 권역 입력창 동적 생성 -->
+    </div>
+
+    <label for="errorNo">오분기 슈트 번호 (사진 찍은 슈트 번호)</label>
+    <input type="text" id="errorNo" placeholder="예: 4" />
+
+    <label for="errorZone">오분기 권역</label>
+    <input type="text" id="errorZone" placeholder="예: H" />
+
+    <label for="time">발생시각</label>
+    <input type="text" id="time" placeholder="예: 16:19" />
+
+    <label for="mentions">맨션 수정 (수정 가능)</label>
+    <textarea id="mentions" rows="4">@손종선[평택HUB] @신직호[평택HUB_분류] @김남일[평택 HUB _ SIOC]
+@권미선[평택HUB_SIOC] @홍지호 [FC자동화설비]</textarea>
+
+    <button onclick="generateText()">오분기 문구 생성</button>
+
+    <div class="output" id="outputBox"></div>
+
+    <div class="suit-reference" aria-label="슈트 번호 참조">
+      슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+    </div>
   </div>
-
-  <div class="input-group">
-    <label for="targetShootNum">지시 슈트 번호 (잘못나온 제품 슈트 번호)</label>
-    <input type="text" id="targetShootNum" placeholder="예: 5번" />
-  </div>
-
-  <div class="input-group">
-    <label for="targetRegion">지시 슈트 권역</label>
-    <input type="text" id="targetRegion" placeholder="예: M 권역" />
-  </div>
-
-  <div class="input-group">
-    <label for="wrongShootNum">오분기 슈트 번호 (내가 서 있는 슈트 번호)</label>
-    <input type="text" id="wrongShootNum" placeholder="예: 4번" />
-  </div>
-
-  <div class="input-group">
-    <label for="wrongRegion">오분기 슈트 권역</label>
-    <input type="text" id="wrongRegion" placeholder="예: H 권역" />
-  </div>
-
-  <div class="input-group">
-    <label for="time">발생 시각</label>
-    <input type="text" id="time" placeholder="예: 16:19 분경" />
-  </div>
-
-  <div class="input-group">
-    <label for="mentions">멘션 수정 가능 영역</label>
-    <textarea id="mentions">@손종선[평택HUB]
-@신직호[평택HUB_분류]
-@김남일[평택 HUB _ SIOC]
-@권미선[평택HUB_SIOC]
-@홍지호 [FC자동화설비]</textarea>
-  </div>
-
-  <div class="result-box" id="resultText"></div>
-
-  <button class="copy-btn" id="copyBtn">복사하기</button>
-  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
     const countInput = document.getElementById('count');
-    const targetShootNum = document.getElementById('targetShootNum');
-    const targetRegion = document.getElementById('targetRegion');
-    const wrongShootNum = document.getElementById('wrongShootNum');
-    const wrongRegion = document.getElementById('wrongRegion');
-    const timeInput = document.getElementById('time');
-    const mentionsTextarea = document.getElementById('mentions');
-    const resultText = document.getElementById('resultText');
-    const copyBtn = document.getElementById('copyBtn');
-    const copySuccess = document.getElementById('copySuccess');
+    const orderInputsContainer = document.getElementById('orderInputsContainer');
 
-    function updateResult() {
-      const count = countInput.value || '○';
-      const targetShoot = targetShootNum.value || '○번';
-      const targetReg = targetRegion.value || '○ 권역';
-      const wrongShoot = wrongShootNum.value || '○번';
-      const wrongReg = wrongRegion.value || '○ 권역';
-      const time = timeInput.value || '○○:○○ 분경';
+    function createOrderInputs(n) {
+      orderInputsContainer.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        const div = document.createElement('div');
+        div.className = 'dynamic-input-group';
 
-      const result = `단독 오분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${targetShoot} ${targetReg}
-오분기 슈트 : ${wrongShoot} ${wrongReg}
-발생시각 : ${time}\n\n${mentionsTextarea.value}`;
+        const orderNoInput = document.createElement('input');
+        orderNoInput.type = 'text';
+        orderNoInput.placeholder = `지시 슈트 번호 (잘못 나온 제품 슈트 번호) ${i + 1}`;
+        orderNoInput.className = 'orderNo';
 
-      resultText.textContent = result;
-      copySuccess.style.display = 'none';
+        const orderZoneInput = document.createElement('input');
+        orderZoneInput.type = 'text';
+        orderZoneInput.placeholder = `지시 권역 ${i + 1}`;
+        orderZoneInput.className = 'orderZone';
+
+        div.appendChild(orderNoInput);
+        div.appendChild(orderZoneInput);
+
+        orderInputsContainer.appendChild(div);
+      }
     }
 
-    [countInput, targetShootNum, targetRegion, wrongShootNum, wrongRegion, timeInput, mentionsTextarea].forEach(el => {
-      el.addEventListener('input', updateResult);
+    countInput.addEventListener('input', () => {
+      let n = parseInt(countInput.value);
+      if (isNaN(n) || n < 1) n = 1;
+      createOrderInputs(n);
+      generateText();
     });
 
-    copyBtn.addEventListener('click', () => {
-      const text = resultText.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        copySuccess.style.display = 'block';
-        setTimeout(() => {
-          copySuccess.style.display = 'none';
-        }, 2000);
-      }).catch(() => {
-        alert('복사에 실패했습니다. 수동으로 복사해주세요.');
-      });
+    window.onload = () => {
+      createOrderInputs(parseInt(countInput.value) || 1);
+      generateText();
+    };
+
+    function generateText() {
+      const orderNos = Array.from(document.querySelectorAll('.orderNo')).map(i => i.value.trim()).filter(v => v !== '');
+      const orderZones = Array.from(document.querySelectorAll('.orderZone')).map(i => i.value.trim()).filter(v => v !== '');
+
+      const orderPairs = [];
+      for (let i = 0; i < Math.max(orderNos.length, orderZones.length); i++) {
+        const no = orderNos[i] || '';
+        const zone = orderZones[i] || '';
+        if (no === '' && zone === '') continue;
+        orderPairs.push(`${no ? no + '번' : ''} ${zone ? zone + ' 권역' : ''}`.trim());
+      }
+      const orderStr = orderPairs.join(' / ');
+
+      const errorNo = document.getElementById('errorNo').value.trim();
+      const errorZone = document.getElementById('errorZone').value.trim();
+      const time = document.getElementById('time').value.trim();
+      const mentions = document.getElementById('mentions').value.trim();
+
+      const count = orderPairs.length || 1;
+
+      const text = `단독 오분기건 ${count}건 발생하였습니다.
+지시 슈트 : ${orderStr}
+오분기 슈트 : ${errorNo ? errorNo + '번' : ''} ${errorZone ? errorZone + ' 권역' : ''}
+발생시각 : ${time ? time + ' 분경' : ''}
+
+${mentions}`;
+
+      document.getElementById('outputBox').textContent = text;
+    }
+
+    ['errorNo','errorZone','time','mentions'].forEach(id => {
+      document.getElementById(id).addEventListener('input', generateText);
     });
 
-    updateResult();
+    orderInputsContainer.addEventListener('input', e => {
+      if(e.target.classList.contains('orderNo') || e.target.classList.contains('orderZone')){
+        generateText();
+      }
+    });
   </script>
-
 </body>
 </html>
