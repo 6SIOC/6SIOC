@@ -39,8 +39,8 @@
       border-radius: 8px;
       margin-bottom: 16px;
       box-sizing: border-box;
-      white-space: pre-wrap; /* 변경: 자동 줄바꿈 */
-      overflow-x: hidden;    /* 변경: 가로 스크롤 숨김 */
+      white-space: pre;
+      overflow-x: auto;
       resize: none;
       height: calc(1.8em * 3 + 20px);
     }
@@ -148,9 +148,20 @@
       const id = group.id.replace('calc','');
       const disp = document.getElementById('display'+id);
       const txt = btn.textContent;
-      if (btn.classList.contains('clear') && txt==='C') { disp.value=''; updateResult(id,''); return; }
-      if (btn.classList.contains('clear') && txt==='←') { disp.value=disp.value.slice(0,-1); return; }
-      if (btn.classList.contains('equal')) { doCalc(id); return; }
+      if (btn.classList.contains('clear') && txt==='C') { 
+        disp.value=''; 
+        updateResult(id,''); 
+        return; 
+      }
+      if (btn.classList.contains('clear') && txt==='←') { 
+        disp.value=disp.value.slice(0,-1); 
+        updateResult(id, ''); 
+        return; 
+      }
+      if (btn.classList.contains('equal')) { 
+        doCalc(id); 
+        return; 
+      }
       let v=txt;
       if (v==='÷') v='/'; else if(v==='×') v='*'; else if(v==='−') v='-';
       disp.selectionStart=disp.selectionEnd=disp.value.length;
@@ -161,15 +172,39 @@
       const expr=d.value;
       let js=expr.replace(/(\d+)%/g,'($1/100)');
       let result;
-      try { result=eval(js); result=Math.round(result*100)/100; } catch { result='오류'; }
+      try { 
+        result=eval(js); 
+        result=Math.round(result*100)/100; 
+      } catch { 
+        result='오류'; 
+      }
       d.value=expr+'='+result;
       updateResult(id,result);
     }
-    function updateResult(id,val) { document.getElementById('res'+id).textContent=val; }
+    function updateResult(id,val) { 
+      document.getElementById('res'+id).textContent=val; 
+    }
     function setup() {
       document.querySelectorAll('button').forEach(b=>{
         b.addEventListener('click',handlePress);
         b.addEventListener('touchstart',handlePress,{passive:false});
+      });
+      // textarea 직접 수정시 자동 계산 반영
+      document.querySelectorAll('.display').forEach(textarea => {
+        textarea.addEventListener('input', e => {
+          const id = textarea.id.replace('display','');
+          // 계산 수행
+          const expr = textarea.value;
+          let js = expr.replace(/(\d+)%/g,'($1/100)');
+          let result;
+          try {
+            result = eval(js);
+            result = Math.round(result*100)/100;
+          } catch {
+            result = '오류';
+          }
+          updateResult(id, result);
+        });
       });
     }
     window.onload=setup;
