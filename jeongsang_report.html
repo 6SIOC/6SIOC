@@ -122,8 +122,7 @@
   <input type="number" id="countInput" min="1" max="10" value="1" />
 
   <div id="sheetInputsContainer">
-    <label>지시 슈트 1 (예: 2번 Y권역 1건)</label>
-    <input type="text" class="sheetInput" placeholder="예: 2번 Y권역 1건" />
+    <!-- 동적 입력란 생성됨 -->
   </div>
 
   <label for="rejectedSuitInput">오분기 슈트</label>
@@ -171,9 +170,7 @@
   // 동적으로 지시 슈트 입력란 생성 함수
   function createSheetInputs(num) {
     // 기존 input들 제거
-    while (sheetInputsContainer.firstChild) {
-      sheetInputsContainer.removeChild(sheetInputsContainer.firstChild);
-    }
+    sheetInputsContainer.innerHTML = '';
     for (let i = 1; i <= num; i++) {
       const label = document.createElement('label');
       label.textContent = `지시 슈트 ${i} (예: 2번 Y권역 1건)`;
@@ -195,6 +192,7 @@
       .map(input => input.value.trim())
       .filter(val => val.length > 0);
 
+    // "/" 로 구분된 지시 슈트 문자열 생성
     const sheetsStr = filteredSheets.length > 0 ? filteredSheets.join(' / ') : '○번 ○권역 N건';
     const rejectedVal = rejectedSuitInput.value.trim() || '○○';
     const timeVal = timeInput.value.trim() || '○○:○○';
@@ -203,7 +201,13 @@
     const checkedMentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value);
     const mentionsText = checkedMentions.join(' ');
 
-    resultBox.textContent = `정상분기건 ${countVal}건 발생하였습니다.
+    // 정상분기 건수 숫자가 1 이상일 때, countVal으로 표시
+    let countDisplay = countVal;
+    if(isNaN(Number(countVal)) || Number(countVal) < 1) {
+      countDisplay = '○';
+    }
+
+    resultBox.textContent = `정상분기건 ${countDisplay}건 발생하였습니다.
 지시 슈트 : ${sheetsStr}
 오분기 슈트 : ${rejectedVal}
 발생시각 : ${timeVal} 분경
@@ -240,3 +244,16 @@ ${mentionsText}`;
       }).catch(() => {
         alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
       });
+    } else {
+      alert('이 브라우저는 클립보드 복사를 지원하지 않습니다.');
+    }
+  });
+
+  // 페이지 로드 시 초기화
+  window.addEventListener('DOMContentLoaded', () => {
+    createSheetInputs(parseInt(countInput.value) || 1);
+    updateResult();
+  });
+</script>
+</body>
+</html>
