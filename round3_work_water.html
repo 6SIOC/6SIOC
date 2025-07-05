@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>6층 SIOC 생수 3회차 작업</title>
+  <title>6층 SIOC 생수 3회차 작업 상세</title>
   <style>
     body {
       font-family: 'Noto Sans KR', sans-serif;
@@ -32,10 +32,6 @@
       border-radius: 6px;
       box-sizing: border-box;
     }
-    textarea {
-      height: 160px;
-      resize: vertical;
-    }
     .output {
       margin-top: 20px;
       background: #f9f0ff;
@@ -45,6 +41,15 @@
       font-size: 17px;
       white-space: pre-wrap;
       color: #5f0080;
+    }
+    .mentions-preview {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      margin-top: 10px;
+      font-family: monospace;
     }
     .copy-btn {
       margin-top: 10px;
@@ -58,6 +63,15 @@
     }
     .section {
       margin-top: 30px;
+    }
+    .checkbox-list label {
+      font-weight: normal;
+      margin-bottom: 4px;
+      display: block;
+      cursor: pointer;
+    }
+    .checkbox-list input[type="checkbox"] {
+      margin-right: 8px;
     }
   </style>
 </head>
@@ -74,26 +88,37 @@
     <input type="text" id="timeValue" placeholder="예: 08:40">
   </div>
 
-  <div class="input-group">
-    <label>멘션 수정</label>
-    <textarea id="mentionBox">@손종선[평택HUB]  
-@신직호[평택HUB_분류]  
-@조규준[평택HUB_분류]  
-@김남일[평택 HUB _ SIOC]  
-@권미선[평택HUB_SIOC]  
-@정주석[평택HUB_분류]  
-@표상일 [평택HUB_분류]  
-@배도현 [평택HUB_출하]  
-@김종학[평택HUB_출하]</textarea>
+  <div class="output" id="resultBox">
+    6층 SIOC 생수 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
   </div>
 
-  <div class="output" id="resultBox"></div>
+  <div class="input-group">
+    <label>멘션 수정 가능 영역 (체크된 멘션만 포함)</label>
+    <div id="mentionContainer" class="checkbox-list">
+      <label><input type="checkbox" checked> @손종선[평택HUB]</label>
+      <label><input type="checkbox" checked> @신직호[평택HUB_분류]</label>
+      <label><input type="checkbox" checked> @조규준[평택HUB_분류]</label>
+      <label><input type="checkbox" checked> @김남일[평택 HUB _ SIOC]</label>
+      <label><input type="checkbox" checked> @권미선[평택HUB_SIOC]</label>
+      <label><input type="checkbox" checked> @정주석[평택HUB_분류]</label>
+      <label><input type="checkbox" checked> @표상일 [평택HUB_분류]</label>
+      <label><input type="checkbox" checked> @배도현 [평택HUB_출하]</label>
+      <label><input type="checkbox" checked> @김종학[평택HUB_출하]</label>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>✔ 멘션 미리보기</label>
+    <div id="mentionPreview" class="mentions-preview"></div>
+  </div>
+
   <button class="copy-btn" onclick="copyText()">복사하기</button>
 
   <div class="section">
     <h3>✅ 필요 사진 체크리스트</h3>
     <label><input type="checkbox"> 트럭사진</label><br>
-    <label><input type="checkbox"> 내선 PLT 체크리스트</label>
+    <label><input type="checkbox"> 내선 PLT 체크리스트</label><br>
+    <label><input type="checkbox"> 물작업 최종 수량 엑셀 사진</label>
   </div>
 
   <div class="section">
@@ -104,25 +129,38 @@
   <script>
     const pValue = document.getElementById("pValue");
     const timeValue = document.getElementById("timeValue");
-    const mentionBox = document.getElementById("mentionBox");
     const resultBox = document.getElementById("resultBox");
+    const mentionContainer = document.getElementById("mentionContainer");
+    const mentionPreview = document.getElementById("mentionPreview");
+
+    function pad(n) {
+      return n.toString().padStart(2, '0');
+    }
 
     function updateText() {
-      const p = pValue.value ? `${pValue.value}P` : '○○P';
-      const t = timeValue.value || '○○:○○';
-      const mention = mentionBox.value.trim();
-      resultBox.textContent = `6층 SIOC 생수 3회차 ${p} 상차후 ${t} 1층으로 내려갑니다.\n\n\n${mention}`;
+      const p = pValue.value ? `${pad(pValue.value)}P` : '○○P';
+      const t = timeValue.value.trim() || '○○:○○';
+      resultBox.textContent = `6층 SIOC 생수 3회차 ${p} 상차후 ${t} 1층으로 내려갑니다.`;
+
+      const checkedMentions = Array.from(mentionContainer.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(input => input.parentElement.textContent.trim())
+        .join('\n');
+
+      mentionPreview.textContent = checkedMentions || '(선택된 멘션이 없습니다)';
     }
 
     function copyText() {
-      navigator.clipboard.writeText(resultBox.textContent)
+      const textToCopy = resultBox.textContent + '\n\n\n' + mentionPreview.textContent;
+      navigator.clipboard.writeText(textToCopy)
         .then(() => alert("복사되었습니다!"))
         .catch(() => alert("복사 실패. 수동 복사해주세요."));
     }
 
     pValue.addEventListener('input', updateText);
     timeValue.addEventListener('input', updateText);
-    mentionBox.addEventListener('input', updateText);
+    mentionContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', updateText);
+    });
 
     updateText();
   </script>
