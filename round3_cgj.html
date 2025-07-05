@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>6층 SIOC 충청, 광주, 제주 1회차 작업 상세</title>
+  <title>6층 SIOC 충청, 광주, 제주 3회차 작업 상세</title>
   <style>
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
@@ -83,7 +83,6 @@
       font-weight: 600;
       display: none;
     }
-    /* 체크리스트 스타일 추가 */
     .checklist-section {
       margin-top: 30px;
       font-size: 18px;
@@ -98,7 +97,6 @@
       display: block;
       cursor: pointer;
     }
-    /* 멘션 텍스트 영역 스타일 */
     .mention-area {
       margin-top: 20px;
     }
@@ -124,10 +122,10 @@
   </style>
 </head>
 <body>
-  <header>6층 SIOC 충청, 광주, 제주 1회차 작업 상세 안내</header>
+  <header>6층 SIOC 충청, 광주, 제주 3회차 작업 상세 안내</header>
 
-  <div class="fixed-text">6층 SIOC 충청, 광주, 제주 1회차</div>
-  <div class="fixed-text">1회차</div>
+  <div class="fixed-text">6층 SIOC 충청, 광주, 제주 3회차</div>
+  <div class="fixed-text">3회차</div>
 
   <div class="input-group">
     <label for="pInput">P 입력</label>
@@ -141,10 +139,9 @@
 
   <div class="notice">완성된 안내 문장:</div>
   <div id="resultText" class="result-box">
-    6층 SIOC 충청, 광주, 제주 1회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
+    6층 SIOC 충청, 광주, 제주 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
   </div>
 
-  <!-- 멘션 수정 가능 영역 -->
   <div class="mention-area">
     <label for="mentionsTextarea">멘션 수정 가능 영역</label>
     <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
@@ -158,7 +155,6 @@
 @김종학[평택HUB_출하]</textarea>
   </div>
 
-  <!-- 체크리스트 섹션 -->
   <div class="checklist-section">
     <h3>필요 사진 체크리스트</h3>
     <label><input type="checkbox" /> 1. 트럭사진</label>
@@ -183,7 +179,7 @@
     function updateResult() {
       const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
-      resultText.textContent = `6층 SIOC 충청, 광주, 제주 1회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
+      resultText.textContent = `6층 SIOC 충청, 광주, 제주 3회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
       copySuccess.style.display = 'none';
     }
 
