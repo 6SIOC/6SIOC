@@ -35,8 +35,7 @@
       color: #444;
     }
     input[type="number"],
-    input[type="text"],
-    textarea {
+    input[type="text"] {
       width: 100%;
       padding: 8px 12px;
       font-size: 16px;
@@ -44,12 +43,6 @@
       border-radius: 6px;
       box-sizing: border-box;
       font-family: inherit;
-      resize: vertical;
-    }
-    textarea {
-      min-height: 210px;
-      background-color: #f3e8ff;
-      color: #5f0080;
     }
     .result-box {
       margin-top: 20px;
@@ -61,7 +54,7 @@
       color: #5f0080;
       user-select: text;
       white-space: pre-wrap;
-      min-height: 48px;
+      min-height: 60px;
     }
     button.copy-btn {
       margin-top: 10px;
@@ -72,7 +65,6 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
     button.copy-btn:hover {
       background-color: #7a1fb5;
@@ -83,11 +75,17 @@
       font-weight: 600;
       display: none;
     }
-    .input-group label input[type="checkbox"] {
-      margin-right: 8px;
+    .mentions-wrapper {
+      background: #f3e8ff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 10px;
     }
-    .input-group div {
-      padding-left: 10px;
+    .mentions-wrapper label {
+      font-weight: normal;
+      display: block;
+      margin: 4px 0;
     }
   </style>
 </head>
@@ -107,26 +105,16 @@
     <input type="text" id="timeInput" placeholder="예: 08:40 또는 8시 40분" />
   </div>
 
-  <div class="notice">완성된 안내 문장:</div>
-  <div id="resultText" class="result-box">
-    6층 SIOC 직배 2회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
+  <div class="input-group">
+    <label><strong>멘션 수정 가능 영역</strong></label>
+    <div class="mentions-wrapper" id="mentionCheckboxes"></div>
   </div>
+
+  <div class="notice">완성된 안내 문장:</div>
+  <div id="resultText" class="result-box"></div>
 
   <button class="copy-btn" id="copyBtn">복사하기</button>
   <div id="copySuccess" class="copy-success">복사되었습니다!</div>
-
-  <div class="input-group" style="margin-top:30px;">
-    <label for="mentionsTextarea">멘션 수정 가능 영역</label>
-    <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
-@신직호[평택HUB_분류]
-@조규준[평택HUB_분류]
-@김남일[평택 HUB _ SIOC]
-@권미선[평택HUB_SIOC]
-@정주석[평택HUB_분류]
-@표상일 [평택HUB_분류]
-@배도현 [평택HUB_출하]
-@김종학[평택HUB_출하]</textarea>
-  </div>
 
   <div class="input-group">
     <label><strong>📷 필요 사진 체크리스트</strong></label>
@@ -137,41 +125,73 @@
   </div>
 
   <script>
-    const pInput = document.getElementById('pInput');
-    const timeInput = document.getElementById('timeInput');
-    const resultText = document.getElementById('resultText');
-    const mentionsTextarea = document.getElementById('mentionsTextarea');
-    const copyBtn = document.getElementById('copyBtn');
-    const copySuccess = document.getElementById('copySuccess');
+    const mentions = [
+      "@손종선[평택HUB]",
+      "@신직호[평택HUB_분류]",
+      "@조규준[평택HUB_분류]",
+      "@김남일[평택 HUB _ SIOC]",
+      "@권미선[평택HUB_SIOC]",
+      "@정주석[평택HUB_분류]",
+      "@표상일 [평택HUB_분류]",
+      "@배도현 [평택HUB_출하]",
+      "@김종학[평택HUB_출하]"
+    ];
+
+    const pInput = document.getElementById("pInput");
+    const timeInput = document.getElementById("timeInput");
+    const resultText = document.getElementById("resultText");
+    const copyBtn = document.getElementById("copyBtn");
+    const copySuccess = document.getElementById("copySuccess");
+    const mentionCheckboxes = document.getElementById("mentionCheckboxes");
+
+    // 멘션 체크박스 생성
+    mentions.forEach((text, index) => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.value = text;
+      checkbox.addEventListener("change", updateResult);
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + text));
+      mentionCheckboxes.appendChild(label);
+    });
 
     function padNumber(num, length = 2) {
-      return num.toString().padStart(length, '0');
+      return num.toString().padStart(length, "0");
+    }
+
+    function getSelectedMentions() {
+      const checked = mentionCheckboxes.querySelectorAll("input:checked");
+      return Array.from(checked).map(cb => cb.value).join("\n");
     }
 
     function updateResult() {
-      const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
-      const timeVal = timeInput.value.trim() || '○○:○○';
-      resultText.textContent = `6층 SIOC 직배 2회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
-      copySuccess.style.display = 'none';
+      const p = pInput.value ? padNumber(pInput.value) + "P" : "○○P";
+      const time = timeInput.value.trim() || "○○:○○";
+      const mention = getSelectedMentions();
+      resultText.textContent = `6층 SIOC 직배 2회차 ${p} 상차후 ${time} 1층으로 내려갑니다.\n\n\n${mention}`;
+      copySuccess.style.display = "none";
     }
 
-    copyBtn.addEventListener('click', () => {
-      const textToCopy = resultText.textContent + '\n\n\n' + mentionsTextarea.value;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          copySuccess.style.display = 'block';
-          setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
-        }).catch(() => {
-          alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
-        });
-      } else {
-        alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
-      }
+    copyBtn.addEventListener("click", () => {
+      const textToCopy = resultText.textContent;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copySuccess.style.display = "block";
+        setTimeout(() => {
+          copySuccess.style.display = "none";
+        }, 2000);
+      }).catch(() => {
+        alert("복사에 실패했습니다. 수동으로 복사해 주세요.");
+      });
     });
 
-    pInput.addEventListener('input', updateResult);
-    timeInput.addEventListener('input', updateResult);
+    pInput.addEventListener("input", updateResult);
+    timeInput.addEventListener("input", updateResult);
+
+    // 초기 렌더링
     updateResult();
   </script>
 </body>
 </html>
+
