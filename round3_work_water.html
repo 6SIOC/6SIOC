@@ -150,14 +150,6 @@
     <label><input type="checkbox" class="mentionCheckbox" value="@홍지호 [FC자동화설비]" checked />@홍지호 [FC자동화설비]</label>
   </div>
 
-  <!-- 📷 필요 사진 체크리스트 -->
-  <fieldset class="checklist-group">
-    <legend>📷 필요 사진 체크리스트</legend>
-    <label><input type="checkbox" class="photoCheck" checked /> 트럭사진</label>
-    <label><input type="checkbox" class="photoCheck" checked /> 내선 PLT</label>
-    <label><input type="checkbox" class="photoCheck" checked /> 물작업 최종 수량 엑셀 사진</label>
-  </fieldset>
-
   <!-- 💬 댓글 체크리스트 -->
   <fieldset class="checklist-group">
     <legend>💬 댓글 체크리스트</legend>
@@ -174,6 +166,14 @@
   <button class="copy-btn" id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
+  <!-- 📷 필요 사진 체크리스트 (맨 밑에 위치) -->
+  <fieldset class="checklist-group" style="margin-top: 40px;">
+    <legend>📷 필요 사진 체크리스트</legend>
+    <label><input type="checkbox" class="photoCheck" checked /> 트럭사진</label>
+    <label><input type="checkbox" class="photoCheck" checked /> 내선 PLT</label>
+    <label><input type="checkbox" class="photoCheck" checked /> 물작업 최종 수량 엑셀 사진</label>
+  </fieldset>
+
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
@@ -182,8 +182,8 @@
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
 
-    const photoChecks = document.querySelectorAll('.photoCheck');
     const commentChecks = document.querySelectorAll('.commentCheck');
+    // photoCheck는 복사내용 제외하므로 이벤트만 필요 없음
 
     function updateResult() {
       const pVal = pInput.value.trim() || '○○';
@@ -193,16 +193,8 @@
       const checkedMentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value);
       const mentionsText = checkedMentions.join(' ');
 
-      // 체크된 사진 체크리스트 텍스트
-      const checkedPhotos = Array.from(photoChecks).filter(cb => cb.checked).map(cb => cb.parentElement.textContent.trim());
       // 체크된 댓글 체크리스트 텍스트
       const checkedComments = Array.from(commentChecks).filter(cb => cb.checked).map(cb => cb.parentElement.textContent.trim());
-
-      // 필요 사진 리스트 문구 (선택된 것만)
-      let photoListText = '';
-      if (checkedPhotos.length > 0) {
-        photoListText = '필요 사진 체크리스트:\n' + checkedPhotos.map(item => ' - ' + item).join('\n');
-      }
 
       // 댓글 리스트 문구 (선택된 것만)
       let commentListText = '';
@@ -214,14 +206,12 @@
 
 ${mentionsText}
 
-${photoListText}
-
 ${commentListText}`;
       copySuccess.style.display = 'none';
     }
 
     // 이벤트 리스너 등록
-    [pInput, timeInput, mentionList, ...photoChecks, ...commentChecks].forEach(el => {
+    [pInput, timeInput, mentionList, ...commentChecks].forEach(el => {
       el.addEventListener('input', updateResult);
       el.addEventListener('change', updateResult);
     });
