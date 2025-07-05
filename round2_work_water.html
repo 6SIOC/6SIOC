@@ -63,6 +63,17 @@
       white-space: pre-wrap;
       min-height: 48px;
     }
+    .mentions-box {
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+      color: #333;
+      font-family: monospace;
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
     button.copy-btn {
       margin-top: 10px;
       padding: 10px 20px;
@@ -82,6 +93,16 @@
       margin-top: 8px;
       font-weight: 600;
       display: none;
+    }
+    .checkbox-list label {
+      font-weight: normal;
+      margin-bottom: 4px;
+      display: block;
+      cursor: pointer;
+    }
+    .checkbox-list input[type="checkbox"] {
+      margin-right: 8px;
+      vertical-align: middle;
     }
     .input-group label input[type="checkbox"] {
       margin-right: 8px;
@@ -112,27 +133,33 @@
     6층 SIOC 생수 2회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
   </div>
 
+  <div class="notice" style="margin-top:10px;">멘션 수정 가능 영역 (체크된 멘션만 표시):</div>
+  <div id="mentionsPreview" class="mentions-box"></div>
+
   <button class="copy-btn" id="copyBtn">복사하기</button>
   <div id="copySuccess" class="copy-success">복사되었습니다!</div>
 
   <div class="input-group" style="margin-top:30px;">
-    <label for="mentionsTextarea">멘션 수정 가능 영역</label>
-    <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
-@신직호[평택HUB_분류]
-@조규준[평택HUB_분류]
-@김남일[평택 HUB _ SIOC]
-@권미선[평택HUB_SIOC]
-@정주석[평택HUB_분류]
-@표상일 [평택HUB_분류]
-@배도현 [평택HUB_출하]
-@김종학[평택HUB_출하]</textarea>
+    <label><strong>멘션 수정 가능 영역</strong></label>
+    <div id="mentionsContainer" class="checkbox-list">
+      <label><input type="checkbox" checked />@손종선[평택HUB]</label>
+      <label><input type="checkbox" checked />@신직호[평택HUB_분류]</label>
+      <label><input type="checkbox" checked />@조규준[평택HUB_분류]</label>
+      <label><input type="checkbox" checked />@김남일[평택 HUB _ SIOC]</label>
+      <label><input type="checkbox" checked />@권미선[평택HUB_SIOC]</label>
+      <label><input type="checkbox" checked />@정주석[평택HUB_분류]</label>
+      <label><input type="checkbox" checked />@표상일 [평택HUB_분류]</label>
+      <label><input type="checkbox" checked />@배도현 [평택HUB_출하]</label>
+      <label><input type="checkbox" checked />@김종학[평택HUB_출하]</label>
+    </div>
   </div>
 
   <div class="input-group">
     <label><strong>📷 필요 사진 체크리스트</strong></label>
     <div>
       <label><input type="checkbox" /> 트럭사진</label><br />
-      <label><input type="checkbox" /> 내선 PLT</label>
+      <label><input type="checkbox" /> 내선 PLT</label><br />
+      <label><input type="checkbox" /> 물작업 최종 수량 엑셀 사진</label>
     </div>
   </div>
 
@@ -147,12 +174,20 @@
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
     const resultText = document.getElementById('resultText');
-    const mentionsTextarea = document.getElementById('mentionsTextarea');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
+    const mentionsContainer = document.getElementById('mentionsContainer');
+    const mentionsPreview = document.getElementById('mentionsPreview');
 
     function padNumber(num, length = 2) {
       return num.toString().padStart(length, '0');
+    }
+
+    function updateMentionsPreview() {
+      const checkedMentions = Array.from(mentionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(input => input.parentElement.textContent.trim())
+        .join('\n');
+      mentionsPreview.textContent = checkedMentions || '(선택된 멘션이 없습니다)';
     }
 
     function updateResult() {
@@ -160,10 +195,16 @@
       const timeVal = timeInput.value.trim() || '○○:○○';
       resultText.textContent = `6층 SIOC 생수 2회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
       copySuccess.style.display = 'none';
+      updateMentionsPreview();
     }
 
     copyBtn.addEventListener('click', () => {
-      const textToCopy = resultText.textContent + '\n\n\n' + mentionsTextarea.value;
+      const checkedMentions = Array.from(mentionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(input => input.parentElement.textContent.trim())
+        .join('\n');
+
+      const textToCopy = resultText.textContent + '\n\n\n' + checkedMentions;
+
       if (navigator.clipboard) {
         navigator.clipboard.writeText(textToCopy).then(() => {
           copySuccess.style.display = 'block';
@@ -178,7 +219,12 @@
 
     pInput.addEventListener('input', updateResult);
     timeInput.addEventListener('input', updateResult);
+    mentionsContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', updateResult);
+    });
+
     updateResult();
   </script>
 </body>
 </html>
+
