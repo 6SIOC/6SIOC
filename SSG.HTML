@@ -5,57 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>상품별 계산기</title>
   <style>
-    body {
+    html, body {
       font-family: sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background-color: #f0f0f0;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
     }
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      padding: 20px 0;
+      margin: 0;
     }
     .calc-group {
-      max-width: 360px;
-      margin: 0 auto 40px auto;
+      width: 90%;
+      max-width: 320px;
+      margin: 0 auto 30px auto;
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      padding: 16px;
+      touch-action: manipulation;
     }
     .calc-group h3 {
       text-align: center;
-      margin-bottom: 16px;
+      margin: 0 0 16px;
+      font-size: 1.1em;
     }
     .display {
       width: 100%;
-      font-size: 1.8em;
+      font-size: 1.6em;
       font-weight: bold;
-      padding: 10px 20px;
+      padding: 10px 14px;
       text-align: left;
       border: none;
       background: #f0f0f0;
       border: 2px solid #4caf50;
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       box-sizing: border-box;
-      white-space: pre-wrap;  /* 자동 줄바꿈 허용 */
-      overflow-x: visible;    /* 가로 스크롤 제거 */
-      resize: vertical;       /* 세로 리사이즈 가능 */
-      min-height: calc(1.8em * 3 + 20px);
-      max-height: 200px;
-      line-height: 1.8em;
+      white-space: pre-wrap;
+      overflow-x: visible;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 180px;
+      line-height: 1.6em;
     }
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 6px;
     }
     button {
-      font-size: 1.4em;
-      padding: 18px;
+      font-size: 1.3em;
+      padding: 14px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #e0e0e0;
       color: #000;
       cursor: pointer;
@@ -67,16 +73,51 @@
     button.clear { background-color: #f44336; color: white; }
     button.equal { background-color: #2196f3; color: white; grid-column: 4; }
     button.zero { grid-column: span 2; }
-    table { width: 100%; max-width: 360px; margin: 20px auto 40px auto; border-collapse: collapse; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; box-sizing: border-box; }
-    th, td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+
+    table {
+      width: 90%;
+      max-width: 360px;
+      margin: 0 auto 20px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
     th { background-color: #eee; }
+
+    .download-btn-container {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .download-btn {
+      font-size: 1em;
+      padding: 10px 20px;
+      border: none;
+      background: #5f0080;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background-color 0.2s ease;
+    }
+    .download-btn:hover {
+      background: #440060;
+    }
   </style>
 </head>
 <body>
 
   <h1>상품별 계산기</h1>
 
-  <!-- 네 개의 계산기 그룹 -->
+  <!-- 계산기 4개 -->
   <div class="calc-group" id="calc1">
     <h3>삼다수 2L</h3>
     <textarea id="display1" class="display" spellcheck="false"></textarea>
@@ -138,6 +179,10 @@
     </tbody>
   </table>
 
+  <div class="download-btn-container">
+    <button class="download-btn" onclick="downloadCSV()">결과표 다운로드</button>
+  </div>
+
   <script>
     const lastPress = new WeakMap();
 
@@ -170,27 +215,20 @@
         return; 
       }
 
-      // 버튼 입력 시 * 대신 X 표시
       let v = txt;
       if (v === '÷') v = '/';
-      else if (v === '×') v = 'X'; // 화면에 X 표시
+      else if (v === '×') v = 'X';
       else if (v === '−') v = '-';
 
       disp.selectionStart = disp.selectionEnd = disp.value.length;
       disp.value += v;
-
       autoResizeTextarea(disp);
     }
 
     function doCalc(id) {
       const d = document.getElementById('display'+id);
       let expr = d.value;
-
-      // X를 *로 바꿔서 계산
-      let js = expr.replace(/X/g, '*');
-
-      // % 처리 (숫자% → (숫자/100))
-      js = js.replace(/(\d+)%/g, '($1/100)');
+      let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
 
       let result;
       try { 
@@ -210,8 +248,8 @@
     }
 
     function autoResizeTextarea(textarea) {
-      textarea.style.height = 'auto'; // 높이 초기화
-      textarea.style.height = textarea.scrollHeight + 'px'; // 내용에 맞게 높이 조절
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
     }
 
     function setup() {
@@ -221,20 +259,16 @@
       });
 
       document.querySelectorAll('.display').forEach(textarea => {
-        // 직접 입력시 *를 X로 변환, 계산 결과 자동 업데이트 및 높이 조절
-        textarea.addEventListener('input', e => {
+        textarea.addEventListener('input', () => {
           const id = textarea.id.replace('display','');
           let expr = textarea.value;
 
-          // *가 있으면 X로 바꿈 (표시용)
           if (expr.includes('*')) {
             expr = expr.replace(/\*/g, 'X');
             textarea.value = expr;
           }
 
-          // 계산용 문자열 준비 (X -> *)
-          let js = expr.replace(/X/g, '*');
-          js = js.replace(/(\d+)%/g, '($1/100)');
+          let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
 
           let result;
           try {
@@ -243,13 +277,38 @@
           } catch {
             result = '오류';
           }
+
           updateResult(id, result);
           autoResizeTextarea(textarea);
         });
 
-        // 로드 시 초기 높이 조절
         autoResizeTextarea(textarea);
       });
+    }
+
+    // CSV 다운로드 함수 (UTF-8 BOM 추가)
+    function downloadCSV() {
+      const rows = [
+        ['상품', '결과'],
+        ['삼다수 2L', document.getElementById('res1').textContent],
+        ['삼다수 500ML', document.getElementById('res2').textContent],
+        ['지리산 2L', document.getElementById('res3').textContent],
+        ['지리산 500ML', document.getElementById('res4').textContent]
+      ];
+
+      let csvContent = rows.map(e => e.join(',')).join('\n');
+
+      // UTF-8 BOM 추가 (0xEF,0xBB,0xBF)
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "결과표.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     window.onload = setup;
