@@ -5,13 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WHEELSORTER HUB</title>
   <style>
+    body {
+      padding: 16px;
+      background-color: #fff;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column; /* 버튼들을 세로로 쌓기 */
+      gap: 16px; /* 버튼 간 간격 */
+      max-width: 400px; /* 최대 너비 제한 */
+      margin: 0 auto; /* 가운데 정렬 */
+    }
+
     .category-button {
       display: flex;
       align-items: center;
       gap: 12px;
       width: 100%;
-      margin-bottom: 16px;
-      padding: 16px 20px;
+      padding: 14px 20px;
       background-color: #5f0080;
       color: white;
       font-size: 18px;
@@ -22,11 +34,15 @@
       text-decoration: none;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       transition: background-color 0.3s ease, transform 0.2s ease;
+      box-sizing: border-box;
+      white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
     }
+
     .category-button:hover {
       background-color: #7a1fb5;
       transform: translateY(-2px);
     }
+
     .icon {
       width: 24px;
       height: 24px;
@@ -36,13 +52,15 @@
 </head>
 <body>
 
-  <button class="category-button" onclick="goToPage('obungi_report.html')">
-    <span class="icon">🛤️</span> 오분기
-  </button>
+  <div class="button-container">
+    <button class="category-button" onclick="goToPage('obungi_report.html')">
+      <span class="icon">🛤️</span> 오분기
+    </button>
 
-  <button class="category-button" onclick="goToPage('jeongsang_report.html')">
-    <span class="icon">✅</span> 정상분기
-  </button>
+    <button class="category-button" onclick="goToPage('jeongsang_report.html')">
+      <span class="icon">✅</span> 정상분기
+    </button>
+  </div>
 
   <script>
     function goToPage(url) {
