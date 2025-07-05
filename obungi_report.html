@@ -91,8 +91,21 @@
       margin-bottom: 12px;
     }
 
+    /* 항상 보이도록 수정 */
     #orderTitles {
-      display: none;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #333;
+      border-bottom: 2px solid #5f0080;
+      padding-bottom: 4px;
+    }
+
+    #orderTitles > div {
+      flex: 1;
+      text-align: center;
     }
 
     .mention-list {
@@ -137,22 +150,6 @@
 
       .dynamic-input-group input {
         flex: 1;
-      }
-
-      #orderTitles {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 8px;
-        font-weight: bold;
-        font-size: 1rem;
-        color: #333;
-        border-bottom: 2px solid #5f0080;
-        padding-bottom: 4px;
-      }
-
-      #orderTitles > div {
-        flex: 1;
-        text-align: center;
       }
     }
   </style>
@@ -220,7 +217,7 @@
 
         const orderZoneInput = document.createElement('input');
         orderZoneInput.type = 'text';
-        orderZoneInput.placeholder = `지시 권역 ${i + 1}`;
+        orderZoneInput.placeholder = `예: H`;  // 여기 placeholder 예시 변경됨
         orderZoneInput.className = 'orderZone';
 
         div.appendChild(orderNoInput);
