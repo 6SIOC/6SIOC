@@ -3,123 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>6층 SIOC 직배 3회차</title>
+  <title>6층 SIOC 직배 3회차 작업 상세</title>
   <style>
     body {
-      font-family: 'Noto Sans KR', sans-serif;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
+      margin: 0;
       padding: 20px;
-      background: #fff;
       color: #333;
     }
-    h2 {
-      color: #5f0080;
+    header {
+      font-size: 22px;
+      font-weight: bold;
       margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .fixed-text {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #5f0080;
+      font-weight: 700;
     }
     .input-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
     label {
-      font-weight: 600;
-      margin-bottom: 4px;
       display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
     }
-    input, textarea {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
-      padding: 10px;
+      padding: 8px 12px;
       font-size: 16px;
-      margin-top: 4px;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
+      font-family: inherit;
     }
-    textarea {
-      height: 160px;
-      resize: vertical;
-    }
-    .output {
+    .result-box {
       margin-top: 20px;
-      background: #f9f0ff;
-      border: 1px solid #bba0d3;
-      padding: 14px;
-      border-radius: 6px;
-      font-size: 17px;
-      white-space: pre-wrap;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #faf5ff;
+      font-size: 18px;
       color: #5f0080;
+      user-select: text;
+      white-space: pre-wrap;
+      min-height: 60px;
     }
-    .copy-btn {
+    button.copy-btn {
       margin-top: 10px;
-      padding: 10px 16px;
-      background: #5f0080;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #5f0080;
       color: white;
-      font-weight: bold;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
-    .section {
-      margin-top: 30px;
+    .copy-success {
+      color: green;
+      margin-top: 8px;
+      font-weight: 600;
+      display: none;
+    }
+    .mentions-wrapper {
+      background: #f3e8ff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .mentions-wrapper label {
+      font-weight: normal;
+      display: block;
+      margin: 4px 0;
     }
   </style>
 </head>
 <body>
-  <h2>6층 SIOC 직배 3회차 작업 안내</h2>
+  <header>6층 SIOC 직배 3회차 작업 상세 안내</header>
+
+  <div class="fixed-text">6층 SIOC 직배 3회차</div>
+  <div class="fixed-text">3회차</div>
 
   <div class="input-group">
-    <label>P 입력</label>
-    <input type="number" id="pValue" placeholder="예: 15">
+    <label for="pInput">P 입력</label>
+    <input type="number" id="pInput" min="1" max="999" placeholder="예: 15" />
   </div>
 
   <div class="input-group">
-    <label>시간 입력</label>
-    <input type="text" id="timeValue" placeholder="예: 09:10">
+    <label for="timeInput">시간 입력</label>
+    <input type="text" id="timeInput" placeholder="예: 09:10" />
   </div>
 
   <div class="input-group">
-    <label>멘션 수정</label>
-    <textarea id="mentionBox">@손종선[평택HUB]  
-@신직호[평택HUB_분류]  
-@조규준[평택HUB_분류]  
-@김남일[평택 HUB _ SIOC]  
-@권미선[평택HUB_SIOC]  
-@정주석[평택HUB_분류]  
-@표상일 [평택HUB_분류]  
-@배도현 [평택HUB_출하]  
-@김종학[평택HUB_출하]</textarea>
+    <label><strong>멘션 수정 가능 영역</strong></label>
+    <div class="mentions-wrapper" id="mentionCheckboxes"></div>
   </div>
 
-  <div class="output" id="resultBox"></div>
-  <button class="copy-btn" onclick="copyText()">복사하기</button>
+  <div class="notice">완성된 안내 문장:</div>
+  <div id="resultText" class="result-box"></div>
 
-  <div class="section">
-    <h3>✅ 필요 사진 체크리스트</h3>
-    <label><input type="checkbox"> 트럭사진</label><br>
-    <label><input type="checkbox"> 내선 PLT 체크리스트</label>
+  <button class="copy-btn" id="copyBtn">복사하기</button>
+  <div id="copySuccess" class="copy-success">복사되었습니다!</div>
+
+  <div class="input-group">
+    <label><strong>📷 필요 사진 체크리스트</strong></label>
+    <div>
+      <label><input type="checkbox" /> 트럭사진</label><br />
+      <label><input type="checkbox" /> 내선 PLT</label>
+    </div>
   </div>
 
   <script>
-    const pValue = document.getElementById("pValue");
-    const timeValue = document.getElementById("timeValue");
-    const mentionBox = document.getElementById("mentionBox");
-    const resultBox = document.getElementById("resultBox");
+    const mentions = [
+      "@손종선[평택HUB]",
+      "@신직호[평택HUB_분류]",
+      "@조규준[평택HUB_분류]",
+      "@김남일[평택 HUB _ SIOC]",
+      "@권미선[평택HUB_SIOC]",
+      "@정주석[평택HUB_분류]",
+      "@표상일 [평택HUB_분류]",
+      "@배도현 [평택HUB_출하]",
+      "@김종학[평택HUB_출하]"
+    ];
 
-    function updateText() {
-      const p = pValue.value ? `${pValue.value}P` : '○○P';
-      const t = timeValue.value || '○○:○○';
-      const mention = mentionBox.value.trim();
-      resultBox.textContent = `6층 SIOC 직배 3회차 ${p} 상차후 ${t} 1층으로 내려갑니다.\n\n\n${mention}`;
+    const pInput = document.getElementById("pInput");
+    const timeInput = document.getElementById("timeInput");
+    const resultText = document.getElementById("resultText");
+    const copyBtn = document.getElementById("copyBtn");
+    const copySuccess = document.getElementById("copySuccess");
+    const mentionCheckboxes = document.getElementById("mentionCheckboxes");
+
+    mentions.forEach(text => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.value = text;
+      checkbox.addEventListener("change", updateResult);
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + text));
+      mentionCheckboxes.appendChild(label);
+    });
+
+    function padNumber(num, length = 2) {
+      return num.toString().padStart(length, "0");
     }
 
-    function copyText() {
-      navigator.clipboard.writeText(resultBox.textContent)
-        .then(() => alert("복사되었습니다!"))
-        .catch(() => alert("복사 실패. 수동 복사해주세요."));
+    function getSelectedMentions() {
+      const checked = mentionCheckboxes.querySelectorAll("input:checked");
+      return Array.from(checked).map(cb => cb.value).join("\n");
     }
 
-    pValue.addEventListener('input', updateText);
-    timeValue.addEventListener('input', updateText);
-    mentionBox.addEventListener('input', updateText);
+    function updateResult() {
+      const p = pInput.value ? padNumber(pInput.value) + "P" : "○○P";
+      const time = timeInput.value.trim() || "○○:○○";
+      const mention = getSelectedMentions();
+      resultText.textContent = `6층 SIOC 직배 3회차 ${p} 상차후 ${time} 1층으로 내려갑니다.\n\n\n${mention}`;
+      copySuccess.style.display = "none";
+    }
 
-    updateText();
+    copyBtn.addEventListener("click", () => {
+      const textToCopy = resultText.textContent;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copySuccess.style.display = "block";
+        setTimeout(() => {
+          copySuccess.style.display = "none";
+        }, 2000);
+      }).catch(() => {
+        alert("복사에 실패했습니다. 수동으로 복사해 주세요.");
+      });
+    });
+
+    pInput.addEventListener("input", updateResult);
+    timeInput.addEventListener("input", updateResult);
+
+    updateResult();
   </script>
 </body>
 </html>
+
