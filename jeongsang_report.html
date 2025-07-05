@@ -3,300 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>오분기 입력 및 복사</title>
+  <title>정상 오분기 보고서</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      padding: 16px;
-      margin: 0;
-    }
-
-    .container {
-      background: white;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      max-width: 100%;
-      box-sizing: border-box;
+      max-width: 480px;
       margin: auto;
+      color: #333;
     }
-
+    h1 {
+      color: #5f0080;
+      text-align: center;
+      margin-bottom: 20px;
+    }
     label {
       display: block;
-      margin: 12px 0 4px;
-      font-weight: bold;
-      font-size: 1rem;
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #5f0080;
     }
-
-    input, textarea {
+    input {
       width: 100%;
-      padding: 10px;
-      font-size: 1rem;
+      padding: 10px 12px;
+      font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-
-    textarea {
-      resize: vertical;
-      min-height: 100px;
+    .mention-list {
+      margin-top: 10px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: #faf5ff;
+      font-size: 15px;
+      color: #5f0080;
     }
-
-    button {
+    .mention-list label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .mention-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
+    .output {
       margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #f3e8ff;
+      color: #5f0080;
+      white-space: pre-wrap;
+      min-height: 140px;
+      user-select: text;
+    }
+    button {
       width: 100%;
-      padding: 14px;
-      font-size: 1.1rem;
+      margin-top: 15px;
+      padding: 12px;
+      font-size: 16px;
       background-color: #5f0080;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-
-    .output {
-      margin-top: 30px;
-      background: #f0f0f0;
-      padding: 15px;
-      border-radius: 10px;
-      white-space: pre-line;
-      font-family: monospace;
-      font-size: 0.95rem;
-      user-select: text;
-      min-height: 140px;
-    }
-
-    .suit-reference {
-      margin-top: 16px;
-      padding: 10px 15px;
-      background-color: #f0e6ff;
-      border: 2px solid #5f0080;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      color: #3a0066;
-      user-select: text;
-      line-height: 1.4;
-    }
-
-    .dynamic-inputs {
-      margin-bottom: 20px;
-    }
-
-    .dynamic-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    /* 항상 보이도록 수정 */
-    #orderTitles {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 1rem;
-      color: #333;
-      border-bottom: 2px solid #5f0080;
-      padding-bottom: 4px;
-    }
-
-    #orderTitles > div {
-      flex: 1;
-      text-align: center;
-    }
-
-    .mention-list {
-      margin-top: 15px;
-      border: 1px solid #5f0080;
-      border-radius: 8px;
-      padding: 12px;
-      max-height: 180px;
-      overflow-y: auto;
-      background-color: #faf5ff;
-      font-size: 0.95rem;
-      color: #5f0080;
-    }
-
-    .mention-list label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-
-    .mention-list input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-
     .copy-success {
       color: green;
-      margin-top: 10px;
-      font-weight: 600;
-      display: none;
-      user-select: none;
+      font-weight: bold;
       text-align: center;
-    }
-
-    @media (min-width: 600px) {
-      .dynamic-input-group {
-        flex-direction: row;
-      }
-
-      .dynamic-input-group input {
-        flex: 1;
-      }
+      margin-top: 10px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>오분기 정보 입력 및 복사</h2>
+  <h1>정상 오분기 보고서</h1>
 
-    <label for="count">오분기 건수</label>
-    <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
+  <label for="count">오분기 건수</label>
+  <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
 
-    <div id="orderTitles">
-      <div>지시 슈트 번호</div>
-      <div>지시 권역</div>
-    </div>
+  <label for="orders">지시 슈트/권역 (예: 5 M / 6 S)</label>
+  <input type="text" id="orders" placeholder="예: 5 M / 6 S" />
 
-    <div id="orderInputsContainer" class="dynamic-inputs"></div>
+  <label for="errorInfo">오분기 슈트/권역 (예: 4 H)</label>
+  <input type="text" id="errorInfo" placeholder="예: 4 H" />
 
-    <label for="errorNo">오분기 슈트 번호 (사진 찍은 슈트 번호)</label>
-    <input type="text" id="errorNo" placeholder="예: 4" />
+  <label for="time">발생 시각</label>
+  <input type="text" id="time" placeholder="예: 16:19" />
 
-    <label for="errorZone">오분기 권역</label>
-    <input type="text" id="errorZone" placeholder="예: H" />
-
-    <label for="time">발생시각</label>
-    <input type="text" id="time" placeholder="예: 16:19" />
-
-    <label>멘션 선택 (복사 시 체크된 멘션만 포함)</label>
-    <div class="mention-list" id="mentionList">
-      <label><input type="checkbox" class="mentionCheckbox" value="@손종선[평택HUB]" checked/>@손종선[평택HUB]</label>
-      <label><input type="checkbox" class="mentionCheckbox" value="@신직호[평택HUB_분류]" checked/>@신직호[평택HUB_분류]</label>
-      <label><input type="checkbox" class="mentionCheckbox" value="@김남일[평택 HUB _ SIOC]" checked/>@김남일[평택 HUB _ SIOC]</label>
-      <label><input type="checkbox" class="mentionCheckbox" value="@권미선[평택HUB_SIOC]" checked/>@권미선[평택HUB_SIOC]</label>
-      <label><input type="checkbox" class="mentionCheckbox" value="@홍지호[FC자동화설비]" checked/>@홍지호[FC자동화설비]</label>
-    </div>
-
-    <button onclick="copyToClipboard()">복사하기</button>
-    <div class="copy-success" id="copySuccess">복사되었습니다!</div>
-
-    <div class="output" id="outputBox" aria-live="polite" aria-atomic="true"></div>
-
-    <div class="suit-reference" aria-label="슈트 번호 참조">
-      슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
-    </div>
+  <label>멘션 선택 (복사 시 포함)</label>
+  <div class="mention-list" id="mentionList">
+    <label><input type="checkbox" class="mentionCheckbox" value="@손종선[평택HUB]" checked> @손종선[평택HUB]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@신직호[평택HUB_분류]" checked> @신직호[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@김남일[평택 HUB _ SIOC]" checked> @김남일[평택 HUB _ SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@권미선[평택HUB_SIOC]" checked> @권미선[평택HUB_SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@홍지호 [FC자동화설비]" checked> @홍지호 [FC자동화설비]</label>
   </div>
 
+  <div class="output" id="outputBox"></div>
+
+  <button onclick="copyToClipboard()">복사하기</button>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
+
   <script>
-    const countInput = document.getElementById('count');
-    const orderInputsContainer = document.getElementById('orderInputsContainer');
-    const copySuccess = document.getElementById('copySuccess');
-
-    function createOrderInputs(n) {
-      orderInputsContainer.innerHTML = '';
-      for (let i = 0; i < n; i++) {
-        const div = document.createElement('div');
-        div.className = 'dynamic-input-group';
-
-        const orderNoInput = document.createElement('input');
-        orderNoInput.type = 'text';
-        orderNoInput.placeholder = `지시 슈트 번호 ${i + 1}`;
-        orderNoInput.className = 'orderNo';
-
-        const orderZoneInput = document.createElement('input');
-        orderZoneInput.type = 'text';
-        orderZoneInput.placeholder = `예: H`;
-        orderZoneInput.className = 'orderZone';
-
-        div.appendChild(orderNoInput);
-        div.appendChild(orderZoneInput);
-
-        orderInputsContainer.appendChild(div);
-      }
-    }
-
-    function generateText() {
-      const orderNos = Array.from(document.querySelectorAll('.orderNo')).map(i => i.value.trim());
-      const orderZones = Array.from(document.querySelectorAll('.orderZone')).map(i => i.value.trim());
-
-      const orderPairs = [];
-      for (let i = 0; i < Math.max(orderNos.length, orderZones.length); i++) {
-        const no = orderNos[i] || '';
-        const zone = orderZones[i] || '';
-        if (no === '' && zone === '') continue;
-        orderPairs.push(`${no ? no + '번' : ''} ${zone ? zone + ' 권역' : ''}`.trim());
-      }
-      const orderStr = orderPairs.join(' / ');
-
-      const errorNo = document.getElementById('errorNo').value.trim();
-      const errorZone = document.getElementById('errorZone').value.trim();
+    function updateOutput() {
+      const count = document.getElementById('count').value.trim() || '1';
+      const orders = document.getElementById('orders').value.trim();
+      const errorInfo = document.getElementById('errorInfo').value.trim();
       const time = document.getElementById('time').value.trim();
-
-      const checkedMentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value);
-      const mentionsText = checkedMentions.join(' ');
-
-      const count = orderPairs.length || 1;
+      const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
       const text = `단독 오분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${orderStr}
-오분기 슈트 : ${errorNo ? errorNo + '번' : ''} ${errorZone ? errorZone + ' 권역' : ''}
-발생시각 : ${time ? time + ' 분경' : ''}
+지시 슈트 : ${orders}
+오분기 슈트 : ${errorInfo}
+발생시각 : ${time} 분경
 
-${mentionsText}`;
+${mentions}`;
 
       document.getElementById('outputBox').textContent = text;
+      document.getElementById('copySuccess').style.display = 'none';
     }
 
     function copyToClipboard() {
-      generateText();
+      updateOutput();
       const text = document.getElementById('outputBox').textContent;
       if (!text.trim()) return alert("복사할 내용이 없습니다.");
 
       navigator.clipboard.writeText(text).then(() => {
-        copySuccess.style.display = 'block';
-        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+        document.getElementById('copySuccess').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('copySuccess').style.display = 'none';
+        }, 2000);
       }).catch(() => {
         alert("복사 실패! 수동으로 복사해 주세요.");
       });
     }
 
-    countInput.addEventListener('input', () => {
-      let n = parseInt(countInput.value);
-      if (isNaN(n) || n < 1) n = 1;
-      createOrderInputs(n);
-      generateText();
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', updateOutput);
     });
+    document.getElementById('mentionList').addEventListener('change', updateOutput);
 
-    ['errorNo','errorZone','time'].forEach(id => {
-      document.getElementById(id).addEventListener('input', generateText);
-    });
-
-    orderInputsContainer.addEventListener('input', e => {
-      if(e.target.classList.contains('orderNo') || e.target.classList.contains('orderZone')){
-        generateText();
-      }
-    });
-
-    document.getElementById('mentionList').addEventListener('change', e => {
-      if (e.target.classList.contains('mentionCheckbox')) {
-        copySuccess.style.display = 'none';
-        generateText();
-      }
-    });
-
-    window.onload = () => {
-      createOrderInputs(parseInt(countInput.value) || 1);
-      generateText();
-    };
+    window.onload = updateOutput;
   </script>
 </body>
 </html>
