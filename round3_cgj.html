@@ -35,8 +35,7 @@
       color: #444;
     }
     input[type="number"],
-    input[type="text"],
-    textarea {
+    input[type="text"] {
       width: 100%;
       padding: 8px 12px;
       font-size: 16px;
@@ -44,12 +43,28 @@
       border-radius: 6px;
       box-sizing: border-box;
       font-family: inherit;
-      resize: vertical;
     }
-    textarea {
-      min-height: 210px;
+    .mentions-checkboxes {
       background-color: #f3e8ff;
+      border: 1px solid #5f0080;
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 220px;
+      overflow-y: auto;
       color: #5f0080;
+      font-size: 16px;
+      line-height: 1.4;
+      user-select: none;
+    }
+    .mentions-checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+    .mentions-checkboxes input[type="checkbox"] {
+      cursor: pointer;
     }
     .result-box {
       margin-top: 20px;
@@ -63,6 +78,7 @@
       white-space: pre-wrap;
       min-height: 180px;
       line-height: 1.4;
+      white-space: pre-line;
     }
     button.copy-btn {
       margin-top: 10px;
@@ -74,6 +90,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      width: 100%;
     }
     button.copy-btn:hover {
       background-color: #7a1fb5;
@@ -83,6 +100,17 @@
       margin-top: 8px;
       font-weight: 600;
       display: none;
+      text-align: center;
+    }
+    .checklist-section {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+    .checklist-section h3 {
+      color: #5f0080;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -103,16 +131,18 @@
   </div>
 
   <div class="input-group">
-    <label for="mentionsTextarea">멘션 수정 가능 영역</label>
-    <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
-@신직호[평택HUB_분류]
-@조규준[평택HUB_분류]
-@김남일[평택 HUB _ SIOC]
-@권미선[평택HUB_SIOC]
-@정주석[평택HUB_분류]
-@표상일 [평택HUB_분류]
-@배도현 [평택HUB_출하]
-@김종학[평택HUB_출하]</textarea>
+    <label>멘션 수정 가능 영역</label>
+    <div class="mentions-checkboxes" id="mentionsCheckboxes">
+      <label><input type="checkbox" checked value="@손종선[평택HUB]" /> @손종선[평택HUB]</label>
+      <label><input type="checkbox" checked value="@신직호[평택HUB_분류]" /> @신직호[평택HUB_분류]</label>
+      <label><input type="checkbox" checked value="@조규준[평택HUB_분류]" /> @조규준[평택HUB_분류]</label>
+      <label><input type="checkbox" checked value="@김남일[평택 HUB _ SIOC]" /> @김남일[평택 HUB _ SIOC]</label>
+      <label><input type="checkbox" checked value="@권미선[평택HUB_SIOC]" /> @권미선[평택HUB_SIOC]</label>
+      <label><input type="checkbox" checked value="@정주석[평택HUB_분류]" /> @정주석[평택HUB_분류]</label>
+      <label><input type="checkbox" checked value="@표상일 [평택HUB_분류]" /> @표상일 [평택HUB_분류]</label>
+      <label><input type="checkbox" checked value="@배도현 [평택HUB_출하]" /> @배도현 [평택HUB_출하]</label>
+      <label><input type="checkbox" checked value="@김종학[평택HUB_출하]" /> @김종학[평택HUB_출하]</label>
+    </div>
   </div>
 
   <div id="resultText" class="result-box">
@@ -141,7 +171,7 @@
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
-    const mentionsTextarea = document.getElementById('mentionsTextarea');
+    const mentionsCheckboxes = document.getElementById('mentionsCheckboxes');
     const resultText = document.getElementById('resultText');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
@@ -150,10 +180,15 @@
       return num.toString().padStart(length, '0');
     }
 
+    function getSelectedMentions() {
+      const checkedBoxes = mentionsCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+      return Array.from(checkedBoxes).map(cb => cb.value).join('\n');
+    }
+
     function updateResult() {
       const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
-      const mentionsVal = mentionsTextarea.value.trim();
+      const mentionsVal = getSelectedMentions();
 
       resultText.textContent = `6층 SIOC 충청, 광주, 제주 3회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.\n\n${mentionsVal}`;
       copySuccess.style.display = 'none';
@@ -175,8 +210,9 @@
 
     pInput.addEventListener('input', updateResult);
     timeInput.addEventListener('input', updateResult);
-    mentionsTextarea.addEventListener('input', updateResult);
+    mentionsCheckboxes.addEventListener('change', updateResult);
 
+    // 초기 미리보기 업데이트
     updateResult();
   </script>
 </body>
