@@ -61,7 +61,8 @@
       color: #5f0080;
       user-select: text;
       white-space: pre-wrap;
-      min-height: 48px;
+      min-height: 180px;
+      line-height: 1.4;
     }
     button.copy-btn {
       margin-top: 10px;
@@ -83,19 +84,6 @@
       font-weight: 600;
       display: none;
     }
-    /* 멘션 미리보기 박스 스타일 */
-    #mentionsPreview {
-      margin-top: 10px;
-      padding: 12px;
-      border: 1px solid #5f0080;
-      border-radius: 8px;
-      background-color: #f3e8ff;
-      color: #5f0080;
-      font-size: 16px;
-      white-space: pre-wrap;
-      min-height: 100px;
-      user-select: text;
-    }
   </style>
 </head>
 <body>
@@ -114,12 +102,7 @@
     <input type="text" id="timeInput" placeholder="예: 08:40 또는 8시 40분" />
   </div>
 
-  <div class="notice">완성된 안내 문장:</div>
-  <div id="resultText" class="result-box">
-    6층 SIOC 충청, 광주, 제주 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
-  </div>
-
-  <div class="mention-area">
+  <div class="input-group">
     <label for="mentionsTextarea">멘션 수정 가능 영역</label>
     <textarea id="mentionsTextarea" spellcheck="false">@손종선[평택HUB]
 @신직호[평택HUB_분류]
@@ -132,11 +115,23 @@
 @김종학[평택HUB_출하]</textarea>
   </div>
 
-  <div id="mentionsPreview"></div>
+  <div id="resultText" class="result-box">
+    6층 SIOC 충청, 광주, 제주 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
+
+    @손종선[평택HUB]
+    @신직호[평택HUB_분류]
+    @조규준[평택HUB_분류]
+    @김남일[평택 HUB _ SIOC]
+    @권미선[평택HUB_SIOC]
+    @정주석[평택HUB_분류]
+    @표상일 [평택HUB_분류]
+    @배도현 [평택HUB_출하]
+    @김종학[평택HUB_출하]
+  </div>
 
   <div class="checklist-section">
     <h3>필요 사진 체크리스트</h3>
-    <label><input type="checkbox" /> 1. 트럭사진</label>
+    <label><input type="checkbox" /> 1. 트럭사진</label><br/>
     <label><input type="checkbox" /> 2. 내선 PLT 체크리스트</label>
   </div>
 
@@ -146,9 +141,8 @@
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
-    const resultText = document.getElementById('resultText');
     const mentionsTextarea = document.getElementById('mentionsTextarea');
-    const mentionsPreview = document.getElementById('mentionsPreview');
+    const resultText = document.getElementById('resultText');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
 
@@ -159,13 +153,14 @@
     function updateResult() {
       const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
-      resultText.textContent = `6층 SIOC 충청, 광주, 제주 3회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
-      mentionsPreview.textContent = mentionsTextarea.value;
+      const mentionsVal = mentionsTextarea.value.trim();
+
+      resultText.textContent = `6층 SIOC 충청, 광주, 제주 3회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.\n\n${mentionsVal}`;
       copySuccess.style.display = 'none';
     }
 
     copyBtn.addEventListener('click', () => {
-      const textToCopy = resultText.textContent + '\n\n\n' + mentionsTextarea.value;
+      const textToCopy = resultText.textContent;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(textToCopy).then(() => {
           copySuccess.style.display = 'block';
