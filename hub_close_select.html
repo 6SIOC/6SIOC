@@ -85,6 +85,28 @@
     .hidden {
       display: none;
     }
+    /* 멘션 체크박스 그룹 스타일 */
+    #mentionsCheckboxes {
+      margin-top: 15px;
+      border: 1px solid #5f0080;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: #f3e8ff;
+      max-width: 420px;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 16px;
+    }
+    #mentionsCheckboxes label {
+      font-weight: normal;
+      color: #5f0080;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   </style>
 </head>
 <body>
@@ -110,8 +132,17 @@
 
   <div class="result-box" id="resultText">6층 SIOC ○○ ○회차 ○○:○○ 마감입니다</div>
 
-  <label for="mentionsTextarea">멘션 수정 가능 영역</label>
-  <textarea id="mentionsTextarea" rows="6" spellcheck="false">@손종선[평택HUB] @신직호[평택HUB_분류] @조규준[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC] @정주석[평택HUB_분류] @배도현 [평택HUB_출하] @김종학[평택HUB_출하]</textarea>
+  <label>멘션 선택 (복사 시 체크된 멘션만 포함)</label>
+  <div id="mentionsCheckboxes">
+    <label><input type="checkbox" class="mention-checkbox" checked /> @손종선[평택HUB]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @신직호[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @조규준[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @김남일[평택 HUB _ SIOC]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @권미선[평택HUB_SIOC]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @정주석[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @배도현 [평택HUB_출하]</label>
+    <label><input type="checkbox" class="mention-checkbox" checked /> @김종학[평택HUB_출하]</label>
+  </div>
 
   <button class="copy-btn" id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
@@ -121,7 +152,7 @@
     const batchInput = document.getElementById('batchInput');
     const timeInput = document.getElementById('timeInput');
     const resultText = document.getElementById('resultText');
-    const mentionsTextarea = document.getElementById('mentionsTextarea');
+    const mentionsCheckboxes = document.querySelectorAll('.mention-checkbox');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
     const batchGroup = document.getElementById('batchGroup');
@@ -152,12 +183,17 @@
       copySuccess.style.display = 'none';
     }
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateResult));
-    batchInput.addEventListener('input', updateResult);
-    timeInput.addEventListener('input', updateResult);
+    function getSelectedMentions() {
+      const selectedMentions = [];
+      mentionsCheckboxes.forEach(cb => {
+        if (cb.checked) selectedMentions.push(cb.parentElement.textContent.trim());
+      });
+      return selectedMentions.join(' ');
+    }
 
     copyBtn.addEventListener('click', () => {
-      const textToCopy = resultText.textContent + '\n\n' + mentionsTextarea.value;
+      const mentionsText = getSelectedMentions();
+      const textToCopy = resultText.textContent + '\n\n' + mentionsText;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(textToCopy).then(() => {
           copySuccess.style.display = 'block';
@@ -168,6 +204,16 @@
       } else {
         alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
       }
+    });
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateResult));
+    batchInput.addEventListener('input', updateResult);
+    timeInput.addEventListener('input', updateResult);
+
+    mentionsCheckboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        copySuccess.style.display = 'none';
+      });
     });
 
     updateResult();
