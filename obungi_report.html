@@ -69,7 +69,7 @@
     }
 
     .suit-reference {
-      margin-top: 16px;
+      margin-bottom: 18px;
       padding: 10px 15px;
       background-color: #f0e6ff;
       border: 2px solid #5f0080;
@@ -91,7 +91,6 @@
       margin-bottom: 12px;
     }
 
-    /* 항상 보이도록 수정 */
     #orderTitles {
       display: flex;
       gap: 10px;
@@ -156,6 +155,12 @@
 </head>
 <body>
   <div class="container">
+
+    <!-- 👇 맨 위로 이동한 슈트 번호 참조 박스 -->
+    <div class="suit-reference" aria-label="슈트 번호 참조">
+      🧾 슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+    </div>
+
     <h2>오분기 정보 입력 및 복사</h2>
 
     <label for="count">오분기 건수</label>
@@ -190,10 +195,6 @@
     <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
     <div class="output" id="outputBox" aria-live="polite" aria-atomic="true"></div>
-
-    <div class="suit-reference" aria-label="슈트 번호 참조">
-      슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
-    </div>
   </div>
 
   <script>
@@ -233,7 +234,6 @@
         const no = orderNos[i] || '';
         const zone = orderZones[i] || '';
         if (no === '' && zone === '') continue;
-        // 권역 붙일 때 띄어쓰기 없이 붙이기
         orderPairs.push(`${no ? no + '번' : ''}${zone ? zone + '권역' : ''}`);
       }
       const orderStr = orderPairs.join(' / ');
@@ -301,4 +301,3 @@ ${mentionsText}`;
   </script>
 </body>
 </html>
-
