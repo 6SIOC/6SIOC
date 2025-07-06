@@ -22,6 +22,18 @@
       margin: auto;
     }
 
+    .suit-reference {
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      background-color: #f0e6ff;
+      border: 2px solid #5f0080;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #3a0066;
+      user-select: text;
+      line-height: 1.5;
+    }
+
     label {
       display: block;
       margin: 12px 0 4px;
@@ -66,18 +78,6 @@
       font-size: 0.95rem;
       user-select: text;
       min-height: 140px;
-    }
-
-    .suit-reference {
-      margin-bottom: 18px;
-      padding: 10px 15px;
-      background-color: #f0e6ff;
-      border: 2px solid #5f0080;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      color: #3a0066;
-      user-select: text;
-      line-height: 1.4;
     }
 
     .dynamic-inputs {
@@ -155,10 +155,9 @@
 </head>
 <body>
   <div class="container">
-
-    <!-- 👇 맨 위로 이동한 슈트 번호 참조 박스 -->
-    <div class="suit-reference" aria-label="슈트 번호 참조">
-      🧾 슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+    <!-- 슈트 번호 참조 -->
+    <div class="suit-reference">
+      슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
     </div>
 
     <h2>오분기 정보 입력 및 복사</h2>
@@ -220,7 +219,6 @@
 
         div.appendChild(orderNoInput);
         div.appendChild(orderZoneInput);
-
         orderInputsContainer.appendChild(div);
       }
     }
@@ -234,22 +232,22 @@
         const no = orderNos[i] || '';
         const zone = orderZones[i] || '';
         if (no === '' && zone === '') continue;
-        orderPairs.push(`${no ? no + '번' : ''}${zone ? zone + '권역' : ''}`);
+        orderPairs.push(`${no ? no + '번 ' : ''}${zone ? zone + '권역' : ''}`);
       }
       const orderStr = orderPairs.join(' / ');
 
       const errorNo = document.getElementById('errorNo').value.trim();
       const errorZone = document.getElementById('errorZone').value.trim();
-      const time = document.getElementById('time').value.trim();
+      const errorPart = `${errorNo ? errorNo + '번 ' : ''}${errorZone ? errorZone + '권역' : ''}`;
 
+      const time = document.getElementById('time').value.trim();
       const checkedMentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value);
       const mentionsText = checkedMentions.join(' ');
-
       const count = orderPairs.length || 1;
 
       const text = `단독 오분기건 ${count}건 발생하였습니다.
 지시 슈트 : ${orderStr}
-오분기 슈트 : ${errorNo ? errorNo + '번' : ''}${errorZone ? errorZone + '권역' : ''}
+오분기 슈트 : ${errorPart}
 발생시각 : ${time ? time + ' 분경' : ''}
 
 ${mentionsText}`;
