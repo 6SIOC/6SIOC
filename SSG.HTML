@@ -2,317 +2,253 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>상품별 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>정상 오분기 보고서</title>
   <style>
-    html, body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f0f0f0;
-      overscroll-behavior: contain;
-      scroll-behavior: smooth;
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #fff;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+      color: #333;
     }
     h1 {
+      color: #5f0080;
       text-align: center;
-      padding: 20px 0;
-      margin: 0;
+      margin-bottom: 20px;
     }
-    .calc-group {
-      width: 90%;
-      max-width: 320px;
-      margin: 0 auto 30px auto;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 16px;
-      touch-action: manipulation;
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #5f0080;
     }
-    .calc-group h3 {
-      text-align: center;
-      margin: 0 0 16px;
-      font-size: 1.1em;
-    }
-    .display {
+    input {
       width: 100%;
-      font-size: 1.6em;
-      font-weight: bold;
-      padding: 10px 14px;
-      text-align: left;
-      border: none;
-      background: #f0f0f0;
-      border: 2px solid #4caf50;
-      border-radius: 8px;
-      margin-bottom: 14px;
+      padding: 10px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       box-sizing: border-box;
-      white-space: pre-wrap;
-      overflow-x: visible;
-      resize: vertical;
-      min-height: 80px;
-      max-height: 180px;
-      line-height: 1.6em;
+      margin-bottom: 10px;
     }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+    .mention-list {
+      margin-top: 10px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: #faf5ff;
+      font-size: 15px;
+      color: #5f0080;
+    }
+    .mention-list label {
+      display: flex;
+      align-items: center;
       gap: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mention-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .dynamic-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dynamic-input-group input {
+      flex: 1;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      background-color: #f3e8ff;
+      color: #5f0080;
+      white-space: pre-wrap;
+      min-height: 140px;
+      user-select: text;
     }
     button {
-      font-size: 1.3em;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background-color: #e0e0e0;
-      color: #000;
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-      transition: background-color 0.2s ease;
-    }
-    button.operator { background-color: #4caf50; color: white; }
-    button.clear { background-color: #f44336; color: white; }
-    button.equal { background-color: #2196f3; color: white; grid-column: 4; }
-    button.zero { grid-column: span 2; }
-
-    table {
-      width: 90%;
-      max-width: 360px;
-      margin: 0 auto 20px auto;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th { background-color: #eee; }
-
-    .download-btn-container {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-    .download-btn {
-      font-size: 1em;
-      padding: 10px 20px;
-      border: none;
-      background: #5f0080;
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #5f0080;
       color: white;
+      border: none;
       border-radius: 8px;
       cursor: pointer;
       user-select: none;
-      touch-action: manipulation;
-      transition: background-color 0.2s ease;
     }
-    .download-btn:hover {
-      background: #440060;
+    .copy-success {
+      color: green;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+    .suit-reference {
+      margin-top: 25px;
+      font-size: 14px;
+      background-color: #eee6ff;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      color: #5f0080;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
+  <h1>정상분기 보고서</h1>
 
-  <h1>상품별 계산기</h1>
-
-  <!-- 계산기 4개 -->
-  <div class="calc-group" id="calc1">
-    <h3>삼다수 2L</h3>
-    <textarea id="display1" class="display" spellcheck="false"></textarea>
-    <div class="buttons">
-      <button class="clear">C</button>
-      <button class="operator">%</button>
-      <button class="clear">←</button>
-      <button class="operator">÷</button>
-      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
-      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
-      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
-      <button class="zero">0</button><button>.</button><button class="equal">=</button>
-    </div>
+  <div class="suit-reference">
+    슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
   </div>
 
-  <div class="calc-group" id="calc2">
-    <h3>삼다수 500ML</h3>
-    <textarea id="display2" class="display" spellcheck="false"></textarea>
-    <div class="buttons">
-      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
-      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
-      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
-      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
-      <button class="zero">0</button><button>.</button><button class="equal">=</button>
-    </div>
+  <label for="count">정상분기 건수</label>
+  <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
+
+  <label>지시 슈트/권역 입력</label>
+  <div id="orderInputsContainer"></div>
+
+  <label for="errorInfo">오분기 슈트/권역 (예: 리젝)</label>
+  <input type="text" id="errorInfo" placeholder="예: 리젝" value="리젝" />
+
+  <label for="time">발생 시각</label>
+  <input type="text" id="time" placeholder="예: 16:19" />
+
+  <label>멘션 선택 (복사 시 포함)</label>
+  <div class="mention-list" id="mentionList">
+    <label><input type="checkbox" class="mentionCheckbox" value="@손종선[평택HUB]" checked> @손종선[평택HUB]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@신직호[평택HUB_분류]" checked> @신직호[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@김남일[평택 HUB _ SIOC]" checked> @김남일[평택 HUB _ SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@권미선[평택HUB_SIOC]" checked> @권미선[평택HUB_SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@홍지호 [FC자동화설비]" checked> @홍지호 [FC자동화설비]</label>
   </div>
 
-  <div class="calc-group" id="calc3">
-    <h3>지리산 2L</h3>
-    <textarea id="display3" class="display" spellcheck="false"></textarea>
-    <div class="buttons">
-      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
-      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
-      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
-      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
-      <button class="zero">0</button><button>.</button><button class="equal">=</button>
-    </div>
-  </div>
+  <div class="output" id="outputBox"></div>
 
-  <div class="calc-group" id="calc4">
-    <h3>지리산 500ML</h3>
-    <textarea id="display4" class="display" spellcheck="false"></textarea>
-    <div class="buttons">
-      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
-      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
-      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
-      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
-      <button class="zero">0</button><button>.</button><button class="equal">=</button>
-    </div>
-  </div>
-
-  <table id="resultTable">
-    <thead><tr><th>상품</th><th>결과</th></tr></thead>
-    <tbody>
-      <tr><td>삼다수 2L</td><td id="res1"></td></tr>
-      <tr><td>삼다수 500ML</td><td id="res2"></td></tr>
-      <tr><td>지리산 2L</td><td id="res3"></td></tr>
-      <tr><td>지리산 500ML</td><td id="res4"></td></tr>
-    </tbody>
-  </table>
-
-  <div class="download-btn-container">
-    <button class="download-btn" onclick="downloadCSV()">결과표 다운로드</button>
-  </div>
+  <button id="copyBtn">복사하기</button>
+  <button id="saveImageBtn">결과표 이미지 저장</button>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
-    const lastPress = new WeakMap();
+    const countInput = document.getElementById('count');
+    const orderInputsContainer = document.getElementById('orderInputsContainer');
+    const errorInfoInput = document.getElementById('errorInfo');
+    const timeInput = document.getElementById('time');
+    const outputBox = document.getElementById('outputBox');
+    const copyBtn = document.getElementById('copyBtn');
+    const saveImageBtn = document.getElementById('saveImageBtn');
+    const copySuccess = document.getElementById('copySuccess');
 
-    function handlePress(e) {
-      e.preventDefault();
-      const btn = e.currentTarget;
-      const now = Date.now();
-      if (lastPress.has(btn) && now - lastPress.get(btn) < 100) return;
-      lastPress.set(btn, now);
+    function createOrderInputs(n) {
+      orderInputsContainer.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        const div = document.createElement('div');
+        div.className = 'dynamic-input-group';
 
-      const group = btn.closest('.calc-group');
-      const id = group.id.replace('calc','');
-      const disp = document.getElementById('display'+id);
-      const txt = btn.textContent;
+        const suitInput = document.createElement('input');
+        suitInput.type = 'number';
+        suitInput.min = '1';
+        suitInput.placeholder = '예) 1';
+        suitInput.className = 'suitInput';
 
-      if (btn.classList.contains('clear') && txt==='C') { 
-        disp.value = ''; 
-        updateResult(id, ''); 
-        autoResizeTextarea(disp);
-        return; 
+        const zoneInput = document.createElement('input');
+        zoneInput.type = 'text';
+        zoneInput.placeholder = '예) M';
+        zoneInput.maxLength = 2;
+        zoneInput.className = 'zoneInput';
+
+        div.appendChild(suitInput);
+        div.appendChild(zoneInput);
+
+        orderInputsContainer.appendChild(div);
       }
-      if (btn.classList.contains('clear') && txt==='←') { 
-        disp.value = disp.value.slice(0, -1); 
-        updateResult(id, ''); 
-        autoResizeTextarea(disp);
-        return; 
-      }
-      if (btn.classList.contains('equal')) { 
-        doCalc(id); 
-        return; 
-      }
-
-      let v = txt;
-      if (v === '÷') v = '/';
-      else if (v === '×') v = 'X';
-      else if (v === '−') v = '-';
-
-      disp.selectionStart = disp.selectionEnd = disp.value.length;
-      disp.value += v;
-      autoResizeTextarea(disp);
     }
 
-    function doCalc(id) {
-      const d = document.getElementById('display'+id);
-      let expr = d.value;
-      let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
+    function updateOutput() {
+      const count = parseInt(countInput.value) || 1;
+      const suitInputs = orderInputsContainer.querySelectorAll('.suitInput');
+      const zoneInputs = orderInputsContainer.querySelectorAll('.zoneInput');
+      const orderPairs = [];
 
-      let result;
-      try { 
-        result = eval(js); 
-        result = Math.round(result * 100) / 100; 
-      } catch { 
-        result = '오류'; 
+      for (let i = 0; i < count; i++) {
+        const suit = suitInputs[i]?.value.trim();
+        let zone = zoneInputs[i]?.value.trim();
+        if (suit === '' && zone === '') continue;
+        if (zone) zone = zone.replace(/\s+/g, '') + '권역';
+
+        let pair = '';
+        if (suit) pair += suit + '번';
+        if (zone) pair += ' ' + zone;
+        orderPairs.push(pair.trim());
       }
 
-      d.value = expr + '=' + result;
-      updateResult(id, result);
-      autoResizeTextarea(d);
+      const ordersText = orderPairs.join(' / ') || ' ';
+      const errorInfo = errorInfoInput.value.trim() || '리젝';
+      const time = timeInput.value.trim();
+      const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
+
+      const text = `정상분기건 ${count}건 발생하였습니다.
+지시 슈트 : ${ordersText}
+오분기 슈트 : ${errorInfo}
+발생시각 : ${time} 분경
+
+${mentions}`;
+
+      outputBox.textContent = text;
+      copySuccess.style.display = 'none';
     }
 
-    function updateResult(id, val) { 
-      document.getElementById('res'+id).textContent = val; 
-    }
+    function copyToClipboard() {
+      updateOutput();
+      const text = outputBox.textContent;
+      if (!text.trim()) return alert("복사할 내용이 없습니다.");
 
-    function autoResizeTextarea(textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-    }
-
-    function setup() {
-      document.querySelectorAll('button').forEach(b => {
-        b.addEventListener('click', handlePress);
-        b.addEventListener('touchstart', handlePress, { passive: false });
-      });
-
-      document.querySelectorAll('.display').forEach(textarea => {
-        textarea.addEventListener('input', () => {
-          const id = textarea.id.replace('display','');
-          let expr = textarea.value;
-
-          if (expr.includes('*')) {
-            expr = expr.replace(/\*/g, 'X');
-            textarea.value = expr;
-          }
-
-          let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
-
-          let result;
-          try {
-            result = eval(js);
-            result = Math.round(result * 100) / 100;
-          } catch {
-            result = '오류';
-          }
-
-          updateResult(id, result);
-          autoResizeTextarea(textarea);
-        });
-
-        autoResizeTextarea(textarea);
+      navigator.clipboard.writeText(text).then(() => {
+        copySuccess.style.display = 'block';
+        setTimeout(() => copySuccess.style.display = 'none', 2000);
+      }).catch(() => {
+        alert("복사 실패! 수동으로 복사해 주세요.");
       });
     }
 
-    // CSV 다운로드 함수 (UTF-8 BOM 추가)
-    function downloadCSV() {
-      const rows = [
-        ['상품', '결과'],
-        ['삼다수 2L', document.getElementById('res1').textContent],
-        ['삼다수 500ML', document.getElementById('res2').textContent],
-        ['지리산 2L', document.getElementById('res3').textContent],
-        ['지리산 500ML', document.getElementById('res4').textContent]
-      ];
-
-      let csvContent = rows.map(e => e.join(',')).join('\n');
-
-      // UTF-8 BOM 추가 (0xEF,0xBB,0xBF)
-      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-      const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "결과표.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    function saveOutputAsImage() {
+      html2canvas(document.getElementById("outputBox")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "정상분기_결과표.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }).catch(() => {
+        alert("이미지 저장에 실패했습니다.");
+      });
     }
 
-    window.onload = setup;
+    countInput.addEventListener('input', () => {
+      const n = parseInt(countInput.value);
+      createOrderInputs(isNaN(n) || n < 1 ? 1 : n);
+      updateOutput();
+    });
+
+    orderInputsContainer.addEventListener('input', updateOutput);
+    errorInfoInput.addEventListener('input', updateOutput);
+    timeInput.addEventListener('input', updateOutput);
+    document.getElementById('mentionList').addEventListener('change', updateOutput);
+    copyBtn.addEventListener('click', copyToClipboard);
+    saveImageBtn.addEventListener('click', saveOutputAsImage);
+
+    window.onload = () => {
+      createOrderInputs(1);
+      updateOutput();
+    };
   </script>
-
 </body>
 </html>
