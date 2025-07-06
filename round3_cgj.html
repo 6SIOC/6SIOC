@@ -176,8 +176,12 @@
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
 
-    function padNumber(num, length = 2) {
-      return num.toString().padStart(length, '0');
+    function formatPNumber(num) {
+      const n = Number(num);
+      // 10 이하일 때 앞 0 없이 숫자만 표기
+      if (n <= 10) return n.toString();
+      // 그 이상은 그냥 숫자 그대로
+      return n.toString();
     }
 
     function getSelectedMentions() {
@@ -186,7 +190,7 @@
     }
 
     function updateResult() {
-      const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
+      const pVal = pInput.value ? formatPNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
       const mentionsVal = getSelectedMentions();
 
