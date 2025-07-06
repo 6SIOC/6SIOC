@@ -13,17 +13,32 @@
       margin: auto;
       color: #333;
     }
+
+    .suit-reference {
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      background-color: #f0e6ff;
+      border: 2px solid #5f0080;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #3a0066;
+      user-select: text;
+      line-height: 1.5;
+    }
+
     h1 {
       color: #5f0080;
       text-align: center;
       margin-bottom: 20px;
     }
+
     label {
       display: block;
       margin: 10px 0 5px;
       font-weight: 600;
       color: #5f0080;
     }
+
     input {
       width: 100%;
       padding: 10px 12px;
@@ -33,6 +48,7 @@
       box-sizing: border-box;
       margin-bottom: 10px;
     }
+
     .mention-list {
       margin-top: 10px;
       border: 1px solid #5f0080;
@@ -42,6 +58,7 @@
       font-size: 15px;
       color: #5f0080;
     }
+
     .mention-list label {
       display: flex;
       align-items: center;
@@ -50,19 +67,23 @@
       cursor: pointer;
       user-select: none;
     }
+
     .mention-list input[type="checkbox"] {
       width: 16px;
       height: 16px;
       cursor: pointer;
     }
+
     .dynamic-input-group {
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
     }
+
     .dynamic-input-group input {
       flex: 1;
     }
+
     .output {
       margin-top: 20px;
       padding: 15px;
@@ -74,6 +95,7 @@
       min-height: 140px;
       user-select: text;
     }
+
     button {
       width: 100%;
       margin-top: 15px;
@@ -86,6 +108,7 @@
       cursor: pointer;
       user-select: none;
     }
+
     .copy-success {
       color: green;
       font-weight: bold;
@@ -93,21 +116,15 @@
       margin-top: 10px;
       display: none;
     }
-    .suit-reference {
-      margin-top: 30px;
-      padding: 12px 16px;
-      border: 2px solid #5f0080;
-      border-radius: 8px;
-      background-color: #faf5ff;
-      color: #5f0080;
-      font-size: 0.95rem;
-      user-select: text;
-      line-height: 1.4;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
+
+  <!-- 슈트 번호 참조 박스 -->
+  <div class="suit-reference" aria-label="슈트 번호 참조">
+    슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+  </div>
+
   <h1>정상분기 보고서</h1>
 
   <label for="count">정상분기 건수</label>
@@ -135,10 +152,6 @@
 
   <button id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
-
-  <div class="suit-reference" aria-label="슈트 번호 참조">
-    슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
-  </div>
 
   <script>
     const countInput = document.getElementById('count');
@@ -186,7 +199,6 @@
         let zone = zoneInputs[i]?.value.trim();
         if(suit === '' && zone === '') continue;
 
-        // 권역 입력 띄어쓰기 제거 (ex. "M 권역" -> "M권역")
         if(zone) {
           zone = zone.replace(/\s+/g, '') + '권역';
         }
@@ -196,11 +208,10 @@
         if(zone) pair += ' ' + zone;
         orderPairs.push(pair.trim());
       }
-      const ordersText = orderPairs.join(' / ') || ' ';
 
+      const ordersText = orderPairs.join(' / ') || ' ';
       const errorInfo = errorInfoInput.value.trim() || '리젝';
       const time = timeInput.value.trim();
-
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
       const text = `정상분기건 ${count}건 발생하였습니다.
