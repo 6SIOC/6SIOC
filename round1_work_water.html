@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>6층 SIOC 생수 3회차 작업 상세 안내</title>
+  <title>6층 SIOC 생수 1회차 작업 상세 안내</title>
   <style>
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
@@ -133,7 +133,7 @@
   </style>
 </head>
 <body>
-  <h1>6층 SIOC 생수 3회차 작업 상세 안내</h1>
+  <h1>6층 SIOC 생수 1회차 작업 상세 안내</h1>
 
   <label for="pInput">P값 입력</label>
   <input type="number" id="pInput" min="1" placeholder="예: 100" />
@@ -169,7 +169,7 @@
   </fieldset>
 
   <div class="result-box" id="resultBox" aria-live="polite" aria-atomic="true">
-    6층 SIOC 생수 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
+    6층 SIOC 생수 1회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
 
 @손종선[평택HUB] @신직호[평택HUB_분류] @조규준[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
 @정주석[평택HUB_분류] @표상일[평택HUB_분류] @배도현[평택HUB_출하] @김종학[평택HUB_출하]
@@ -198,3 +198,30 @@
       const mentionsText = checkedMentions.join(' ');
 
       // 댓글 체크리스트는 복사 문구에 포함하지 않음
+
+      resultBox.textContent = `6층 SIOC 생수 1회차 ${pVal}P 상차후 ${timeVal} 1층으로 내려갑니다.
+
+${mentionsText}`;
+      copySuccess.style.display = 'none';
+    }
+
+    // 이벤트 리스너 등록
+    [pInput, timeInput, mentionList].forEach(el => {
+      el.addEventListener('input', updateResult);
+      el.addEventListener('change', updateResult);
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(resultBox.textContent).then(() => {
+        copySuccess.style.display = 'block';
+        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
+      });
+    });
+
+    // 초기 실행
+    updateResult();
+  </script>
+</body>
+</html>
