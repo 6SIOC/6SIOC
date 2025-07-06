@@ -84,9 +84,9 @@
   </style>
 </head>
 <body>
-  <h1>정상 오분기 보고서</h1>
+  <h1>정상분기 보고서</h1>
 
-  <label for="count">오분기 건수</label>
+  <label for="count">정상분기 건수</label>
   <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
 
   <label for="orders">지시 슈트/권역 (예: 5 M / 6 S)</label>
@@ -120,7 +120,7 @@
       const time = document.getElementById('time').value.trim();
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
-      const text = `단독 오분기건 ${count}건 발생하였습니다.
+      const text = `정상분기건 ${count}건 발생하였습니다.
 지시 슈트 : ${orders}
 오분기 슈트 : ${errorInfo}
 발생시각 : ${time} 분경
