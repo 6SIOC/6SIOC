@@ -81,6 +81,14 @@
       margin-top: 10px;
       display: none;
     }
+    .dynamic-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .dynamic-group input {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -89,11 +97,10 @@
   <label for="count">정상분기 건수</label>
   <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
 
-  <label for="orders">지시 슈트/권역 (예: 5 M / 6 S)</label>
-  <input type="text" id="orders" placeholder="예: 5 M / 6 S" />
+  <div id="orderInputsContainer"></div>
 
-  <label for="errorInfo">오분기 슈트/권역 (예: 4 H)</label>
-  <input type="text" id="errorInfo" placeholder="예: 4 H" />
+  <label for="errorInfo">오분기 슈트/권역 (예: 리젝)</label>
+  <input type="text" id="errorInfo" placeholder="예: 리젝" />
 
   <label for="time">발생 시각</label>
   <input type="text" id="time" placeholder="예: 16:19" />
@@ -113,15 +120,49 @@
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
+    const countInput = document.getElementById('count');
+    const orderInputsContainer = document.getElementById('orderInputsContainer');
+
+    function createOrderInputs(n) {
+      orderInputsContainer.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        const group = document.createElement('div');
+        group.className = 'dynamic-group';
+
+        const suitInput = document.createElement('input');
+        suitInput.type = 'text';
+        suitInput.placeholder = `지시 슈트 번호 ${i + 1}`;
+        suitInput.classList.add('suitInput');
+
+        const zoneInput = document.createElement('input');
+        zoneInput.type = 'text';
+        zoneInput.placeholder = `권역 ${i + 1}`;
+        zoneInput.classList.add('zoneInput');
+
+        group.appendChild(suitInput);
+        group.appendChild(zoneInput);
+        orderInputsContainer.appendChild(group);
+      }
+    }
+
     function updateOutput() {
       const count = document.getElementById('count').value.trim() || '1';
-      const orders = document.getElementById('orders').value.trim();
       const errorInfo = document.getElementById('errorInfo').value.trim();
       const time = document.getElementById('time').value.trim();
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
+      const suits = Array.from(document.querySelectorAll('.suitInput')).map(i => i.value.trim());
+      const zones = Array.from(document.querySelectorAll('.zoneInput')).map(i => i.value.trim());
+
+      const orderPairs = suits.map((suit, i) => {
+        const zone = zones[i] || '';
+        return `${suit}번 ${zone} 권역`.trim();
+      }).filter(s => s !== '번  권역');
+
+      const ordersText = orderPairs.join(' / ');
+
       const text = `정상분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${orders}
+지시 슈트 : ${ordersText}
 오분기 슈트 : ${errorInfo}
 발생시각 : ${time} 분경
 
@@ -146,12 +187,19 @@ ${mentions}`;
       });
     }
 
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', updateOutput);
+    countInput.addEventListener('input', () => {
+      const n = Math.max(1, parseInt(countInput.value) || 1);
+      createOrderInputs(n);
+      updateOutput();
     });
+
+    document.addEventListener('input', updateOutput);
     document.getElementById('mentionList').addEventListener('change', updateOutput);
 
-    window.onload = updateOutput;
+    window.onload = () => {
+      createOrderInputs(parseInt(countInput.value) || 1);
+      updateOutput();
+    };
   </script>
 </body>
 </html>
