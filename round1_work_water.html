@@ -3,39 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>6층 SIOC 생수 1회차 작업 상세</title>
+  <title>6층 SIOC 생수 3회차 작업 상세 안내</title>
   <style>
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background-color: #fff;
-      margin: 0;
       padding: 20px;
+      max-width: 480px;
+      margin: auto;
       color: #333;
     }
-    header {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-    }
-    .fixed-text {
-      font-size: 18px;
-      margin-bottom: 15px;
+    h1 {
       color: #5f0080;
-      font-weight: 700;
-    }
-    .input-group {
+      text-align: center;
       margin-bottom: 20px;
     }
     label {
       display: block;
+      margin: 10px 0 5px;
       font-weight: 600;
-      margin-bottom: 6px;
-      color: #444;
+      color: #5f0080;
     }
-    input[type="number"],
     input[type="text"],
+    input[type="number"],
     textarea {
       width: 100%;
       padding: 8px 12px;
@@ -45,9 +35,10 @@
       box-sizing: border-box;
       font-family: inherit;
       resize: vertical;
+      margin-bottom: 10px;
     }
     textarea {
-      min-height: 210px;
+      min-height: 120px;
       background-color: #f3e8ff;
       color: #5f0080;
     }
@@ -59,24 +50,13 @@
       background-color: #faf5ff;
       font-size: 18px;
       color: #5f0080;
+      white-space: pre-wrap;
+      min-height: 140px;
       user-select: text;
-      white-space: pre-wrap;
-      min-height: 48px;
-    }
-    .mentions-box {
-      margin-top: 10px;
-      padding: 10px 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background-color: #f9f9f9;
-      color: #333;
-      font-family: monospace;
-      white-space: pre-wrap;
-      min-height: 80px;
     }
     button.copy-btn {
       margin-top: 10px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 16px;
       background-color: #5f0080;
       color: white;
@@ -84,6 +64,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      width: 100%;
     }
     button.copy-btn:hover {
       background-color: #7a1fb5;
@@ -93,137 +74,127 @@
       margin-top: 8px;
       font-weight: 600;
       display: none;
+      text-align: center;
     }
-    .checkbox-list label {
-      font-weight: normal;
-      margin-bottom: 4px;
-      display: block;
+    .mention-list {
+      margin-top: 10px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      padding: 10px 12px;
+      max-height: 140px;
+      overflow-y: auto;
+      background-color: #faf5ff;
+      font-size: 16px;
+      color: #5f0080;
+    }
+    .mention-list label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mention-list input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
       cursor: pointer;
     }
-    .checkbox-list input[type="checkbox"] {
-      margin-right: 8px;
-      vertical-align: middle;
+    /* 체크리스트 스타일 */
+    .checklist-group {
+      margin-top: 20px;
+      border: 1px solid #5f0080;
+      border-radius: 8px;
+      padding: 12px 16px;
+      background-color: #faf5ff;
+      color: #5f0080;
+      font-weight: 600;
+      user-select: none;
     }
-    .input-group label input[type="checkbox"] {
-      margin-right: 8px;
+    .checklist-group legend {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
     }
-    .input-group div {
-      padding-left: 10px;
+    .checklist-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+    }
+    .checklist-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <header>6층 SIOC 생수 1회차 작업 상세 안내</header>
+  <h1>6층 SIOC 생수 3회차 작업 상세 안내</h1>
 
-  <div class="fixed-text">6층 SIOC 생수 1회차</div>
-  <div class="fixed-text">1회차</div>
+  <label for="pInput">P값 입력</label>
+  <input type="number" id="pInput" min="1" placeholder="예: 100" />
 
-  <div class="input-group">
-    <label for="pInput">P 입력</label>
-    <input type="number" id="pInput" min="1" max="999" placeholder="예: 15" />
+  <label for="timeInput">시간 입력 (예: 13:30)</label>
+  <input type="text" id="timeInput" placeholder="예: 13:30" />
+
+  <label>멘션 선택 (복사 시 체크된 멘션만 포함)</label>
+  <div class="mention-list" id="mentionList">
+    <label><input type="checkbox" class="mentionCheckbox" value="@손종선[평택HUB]" checked />@손종선[평택HUB]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@신직호[평택HUB_분류]" checked />@신직호[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@조규준[평택HUB_분류]" checked />@조규준[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@김남일[평택 HUB _ SIOC]" checked />@김남일[평택 HUB _ SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@권미선[평택HUB_SIOC]" checked />@권미선[평택HUB_SIOC]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@정주석[평택HUB_분류]" checked />@정주석[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@표상일[평택HUB_분류]" checked />@표상일[평택HUB_분류]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@배도현[평택HUB_출하]" checked />@배도현[평택HUB_출하]</label>
+    <label><input type="checkbox" class="mentionCheckbox" value="@김종학[평택HUB_출하]" checked />@김종학[평택HUB_출하]</label>
   </div>
 
-  <div class="input-group">
-    <label for="timeInput">시간 입력</label>
-    <input type="text" id="timeInput" placeholder="예: 08:40 또는 8시 40분" />
-  </div>
+  <!-- 📷 필요 사진 체크리스트 (맨 밑에 위치) -->
+  <fieldset class="checklist-group" style="margin-top: 40px;">
+    <legend>📷 필요 사진 체크리스트</legend>
+    <label><input type="checkbox" class="photoCheck" checked /> 트럭사진</label>
+    <label><input type="checkbox" class="photoCheck" checked /> 내선 PLT</label>
+    <label><input type="checkbox" class="photoCheck" checked /> 물작업 최종 수량 엑셀 사진</label>
+  </fieldset>
 
-  <div class="notice">완성된 안내 문장:</div>
-  <div id="resultText" class="result-box">
-    6층 SIOC 생수 1회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
-  </div>
+  <!-- 💬 댓글 체크리스트 (필요사진 체크리스트 밑으로 이동) -->
+  <fieldset class="checklist-group" style="margin-top: 20px;">
+    <legend>💬 댓글 체크리스트</legend>
+    <label><input type="checkbox" class="commentCheck" checked /> 물작업 사진 10장</label>
+  </fieldset>
 
-  <div class="notice" style="margin-top:10px;">멘션 수정 가능 영역 (체크된 멘션만 표시):</div>
-  <div id="mentionsPreview" class="mentions-box"></div>
+  <div class="result-box" id="resultBox" aria-live="polite" aria-atomic="true">
+    6층 SIOC 생수 3회차 ○○P 상차후 ○○:○○ 1층으로 내려갑니다.
+
+@손종선[평택HUB] @신직호[평택HUB_분류] @조규준[평택HUB_분류] @김남일[평택 HUB _ SIOC] @권미선[평택HUB_SIOC]
+@정주석[평택HUB_분류] @표상일[평택HUB_분류] @배도현[평택HUB_출하] @김종학[평택HUB_출하]
+  </div>
 
   <button class="copy-btn" id="copyBtn">복사하기</button>
-  <div id="copySuccess" class="copy-success">복사되었습니다!</div>
-
-  <div class="input-group" style="margin-top:30px;">
-    <label><strong>멘션 수정 가능 영역</strong></label>
-    <div id="mentionsContainer" class="checkbox-list">
-      <label><input type="checkbox" checked />@손종선[평택HUB]</label>
-      <label><input type="checkbox" checked />@신직호[평택HUB_분류]</label>
-      <label><input type="checkbox" checked />@조규준[평택HUB_분류]</label>
-      <label><input type="checkbox" checked />@김남일[평택 HUB _ SIOC]</label>
-      <label><input type="checkbox" checked />@권미선[평택HUB_SIOC]</label>
-      <label><input type="checkbox" checked />@정주석[평택HUB_분류]</label>
-      <label><input type="checkbox" checked />@표상일 [평택HUB_분류]</label>
-      <label><input type="checkbox" checked />@배도현 [평택HUB_출하]</label>
-      <label><input type="checkbox" checked />@김종학[평택HUB_출하]</label>
-    </div>
-  </div>
-
-  <div class="input-group">
-    <label><strong>📷 필요 사진 체크리스트</strong></label>
-    <div>
-      <label><input type="checkbox" /> 트럭사진</label><br />
-      <label><input type="checkbox" /> 내선 PLT</label><br />
-      <label><input type="checkbox" /> 물작업 최종 수량 엑셀 사진</label>
-    </div>
-  </div>
-
-  <div class="input-group">
-    <label><strong>💬 댓글 체크리스트</strong></label>
-    <div>
-      <label><input type="checkbox" /> 물작업 사진 10장</label>
-    </div>
-  </div>
+  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
     const pInput = document.getElementById('pInput');
     const timeInput = document.getElementById('timeInput');
-    const resultText = document.getElementById('resultText');
+    const mentionList = document.getElementById('mentionList');
+    const resultBox = document.getElementById('resultBox');
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
-    const mentionsContainer = document.getElementById('mentionsContainer');
-    const mentionsPreview = document.getElementById('mentionsPreview');
-
-    function padNumber(num, length = 2) {
-      return num.toString().padStart(length, '0');
-    }
-
-    function updateMentionsPreview() {
-      const checkedMentions = Array.from(mentionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
-        .map(input => input.parentElement.textContent.trim())
-        .join('\n');
-      mentionsPreview.textContent = checkedMentions || '(선택된 멘션이 없습니다)';
-    }
 
     function updateResult() {
-      const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
+      let pRaw = pInput.value.trim();
+      // 10이하 단위일 때 앞에 0 없이 숫자 그대로 표기
+      let pVal = pRaw === '' ? '○○' : String(Number(pRaw));
+
       const timeVal = timeInput.value.trim() || '○○:○○';
-      resultText.textContent = `6층 SIOC 생수 1회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
-      copySuccess.style.display = 'none';
-      updateMentionsPreview();
-    }
 
-    copyBtn.addEventListener('click', () => {
-      const checkedMentions = Array.from(mentionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
-        .map(input => input.parentElement.textContent.trim())
-        .join('\n');
+      // 멘션 체크된 항목만
+      const checkedMentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value);
+      const mentionsText = checkedMentions.join(' ');
 
-      const textToCopy = resultText.textContent + '\n\n\n' + checkedMentions;
-
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          copySuccess.style.display = 'block';
-          setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
-        }).catch(() => {
-          alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
-        });
-      } else {
-        alert('이 브라우저는 복사 기능을 지원하지 않습니다.');
-      }
-    });
-
-    pInput.addEventListener('input', updateResult);
-    timeInput.addEventListener('input', updateResult);
-    mentionsContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', updateResult);
-    });
-
-    updateResult();
-  </script>
-</body>
-</html>
+      // 댓글 체크리스트는 복사 문구에 포함하지 않음
