@@ -93,6 +93,18 @@
       margin-top: 10px;
       display: none;
     }
+    .suit-reference {
+      margin-top: 30px;
+      padding: 12px 16px;
+      border: 2px solid #5f0080;
+      border-radius: 8px;
+      background-color: #faf5ff;
+      color: #5f0080;
+      font-size: 0.95rem;
+      user-select: text;
+      line-height: 1.4;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -123,6 +135,10 @@
 
   <button id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
+
+  <div class="suit-reference" aria-label="슈트 번호 참조">
+    슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+  </div>
 
   <script>
     const countInput = document.getElementById('count');
@@ -161,7 +177,6 @@
     function updateOutput() {
       const count = parseInt(countInput.value) || 1;
 
-      // 지시 슈트/권역 값 모으기
       const suitInputs = orderInputsContainer.querySelectorAll('.suitInput');
       const zoneInputs = orderInputsContainer.querySelectorAll('.zoneInput');
       const orderPairs = [];
@@ -186,7 +201,6 @@
       const errorInfo = errorInfoInput.value.trim() || '리젝';
       const time = timeInput.value.trim();
 
-      // 선택된 멘션들
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
       const text = `정상분기건 ${count}건 발생하였습니다.
