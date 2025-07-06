@@ -233,7 +233,8 @@
         const no = orderNos[i] || '';
         const zone = orderZones[i] || '';
         if (no === '' && zone === '') continue;
-        orderPairs.push(`${no ? no + '번' : ''} ${zone ? zone + ' 권역' : ''}`.trim());
+        // 권역 붙일 때 띄어쓰기 없이 붙이기
+        orderPairs.push(`${no ? no + '번' : ''}${zone ? zone + '권역' : ''}`);
       }
       const orderStr = orderPairs.join(' / ');
 
@@ -248,7 +249,7 @@
 
       const text = `단독 오분기건 ${count}건 발생하였습니다.
 지시 슈트 : ${orderStr}
-오분기 슈트 : ${errorNo ? errorNo + '번' : ''} ${errorZone ? errorZone + ' 권역' : ''}
+오분기 슈트 : ${errorNo ? errorNo + '번' : ''}${errorZone ? errorZone + '권역' : ''}
 발생시각 : ${time ? time + ' 분경' : ''}
 
 ${mentionsText}`;
@@ -300,3 +301,4 @@ ${mentionsText}`;
   </script>
 </body>
 </html>
+
