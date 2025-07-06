@@ -179,8 +179,10 @@
     const mentionsContainer = document.getElementById('mentionsContainer');
     const mentionsPreview = document.getElementById('mentionsPreview');
 
-    function padNumber(num, length = 2) {
-      return num.toString().padStart(length, '0');
+    function formatPNumber(num) {
+      const n = Number(num);
+      if (n <= 10) return n.toString();
+      return n.toString();
     }
 
     function updateMentionsPreview() {
@@ -191,7 +193,7 @@
     }
 
     function updateResult() {
-      const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
+      const pVal = pInput.value ? formatPNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
       resultText.textContent = `6층 SIOC 생수 2회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
       copySuccess.style.display = 'none';
@@ -227,4 +229,3 @@
   </script>
 </body>
 </html>
-
