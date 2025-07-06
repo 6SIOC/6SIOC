@@ -33,6 +33,14 @@
       box-sizing: border-box;
       margin-bottom: 10px;
     }
+    .dynamic-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dynamic-group input {
+      flex: 1;
+    }
     .mention-list {
       margin-top: 10px;
       border: 1px solid #5f0080;
@@ -81,14 +89,6 @@
       margin-top: 10px;
       display: none;
     }
-    .dynamic-group {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .dynamic-group input {
-      flex: 1;
-    }
   </style>
 </head>
 <body>
@@ -120,8 +120,8 @@
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
-    const countInput = document.getElementById('count');
     const orderInputsContainer = document.getElementById('orderInputsContainer');
+    const countInput = document.getElementById('count');
 
     function createOrderInputs(n) {
       orderInputsContainer.innerHTML = '';
@@ -131,12 +131,12 @@
 
         const suitInput = document.createElement('input');
         suitInput.type = 'text';
-        suitInput.placeholder = `지시 슈트 번호 ${i + 1}`;
+        suitInput.placeholder = `예: 1`;
         suitInput.classList.add('suitInput');
 
         const zoneInput = document.createElement('input');
         zoneInput.type = 'text';
-        zoneInput.placeholder = `권역 ${i + 1}`;
+        zoneInput.placeholder = `예: M`;
         zoneInput.classList.add('zoneInput');
 
         group.appendChild(suitInput);
@@ -147,22 +147,21 @@
 
     function updateOutput() {
       const count = document.getElementById('count').value.trim() || '1';
+
+      const suits = Array.from(document.querySelectorAll('.suitInput')).map(input => input.value.trim());
+      const zones = Array.from(document.querySelectorAll('.zoneInput')).map(input => input.value.trim());
+
+      const combinedOrders = suits.map((suit, i) => {
+        const zone = zones[i] || '';
+        return suit && zone ? `${suit} ${zone}` : '';
+      }).filter(Boolean).join(' / ');
+
       const errorInfo = document.getElementById('errorInfo').value.trim();
       const time = document.getElementById('time').value.trim();
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
-      const suits = Array.from(document.querySelectorAll('.suitInput')).map(i => i.value.trim());
-      const zones = Array.from(document.querySelectorAll('.zoneInput')).map(i => i.value.trim());
-
-      const orderPairs = suits.map((suit, i) => {
-        const zone = zones[i] || '';
-        return `${suit}번 ${zone} 권역`.trim();
-      }).filter(s => s !== '번  권역');
-
-      const ordersText = orderPairs.join(' / ');
-
       const text = `정상분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${ordersText}
+지시 슈트 : ${combinedOrders}
 오분기 슈트 : ${errorInfo}
 발생시각 : ${time} 분경
 
@@ -187,15 +186,18 @@ ${mentions}`;
       });
     }
 
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', updateOutput);
+    });
+
+    document.getElementById('mentionList').addEventListener('change', updateOutput);
     countInput.addEventListener('input', () => {
-      const n = Math.max(1, parseInt(countInput.value) || 1);
-      createOrderInputs(n);
+      const count = parseInt(countInput.value) || 1;
+      createOrderInputs(count);
       updateOutput();
     });
 
-    document.addEventListener('input', updateOutput);
-    document.getElementById('mentionList').addEventListener('change', updateOutput);
-
+    // 초기 실행
     window.onload = () => {
       createOrderInputs(parseInt(countInput.value) || 1);
       updateOutput();
