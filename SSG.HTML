@@ -2,253 +2,147 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>정상 오분기 보고서</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품별 계산기</title>
   <style>
     body {
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background-color: #fff;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f9f9f9;
       padding: 20px;
-      max-width: 480px;
-      margin: auto;
       color: #333;
     }
     h1 {
-      color: #5f0080;
       text-align: center;
-      margin-bottom: 20px;
+      color: #5f0080;
+    }
+    .calculator-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .item-group {
+      margin-bottom: 16px;
     }
     label {
-      display: block;
-      margin: 10px 0 5px;
       font-weight: 600;
-      color: #5f0080;
+      display: block;
+      margin-bottom: 4px;
     }
-    input {
+    input[type="number"] {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
-      margin-bottom: 10px;
     }
-    .mention-list {
-      margin-top: 10px;
-      border: 1px solid #5f0080;
-      border-radius: 8px;
-      padding: 10px;
-      background-color: #faf5ff;
-      font-size: 15px;
-      color: #5f0080;
-    }
-    .mention-list label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .mention-list input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-    .dynamic-input-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .dynamic-input-group input {
-      flex: 1;
-    }
-    .output {
+    .result-table {
       margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #5f0080;
-      border-radius: 8px;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .result-table th, .result-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .result-table th {
       background-color: #f3e8ff;
       color: #5f0080;
-      white-space: pre-wrap;
-      min-height: 140px;
-      user-select: text;
     }
-    button {
-      width: 100%;
-      margin-top: 12px;
-      padding: 12px;
-      font-size: 16px;
+    .download-btn {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 20px;
       background-color: #5f0080;
       color: white;
       border: none;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
-      user-select: none;
-    }
-    .copy-success {
-      color: green;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 10px;
-      display: none;
-    }
-    .suit-reference {
-      margin-top: 25px;
-      font-size: 14px;
-      background-color: #eee6ff;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      color: #5f0080;
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <h1>정상분기 보고서</h1>
+  <h1>상품별 계산기</h1>
+  <div class="calculator-container">
+    <div class="item-group">
+      <label for="item1">삼다수 2L 수량</label>
+      <input type="number" id="item1" placeholder="0" />
+    </div>
+    <div class="item-group">
+      <label for="item2">삼다수 500ml 수량</label>
+      <input type="number" id="item2" placeholder="0" />
+    </div>
+    <div class="item-group">
+      <label for="item3">백산수 2L 수량</label>
+      <input type="number" id="item3" placeholder="0" />
+    </div>
+    <div class="item-group">
+      <label for="item4">백산수 500ml 수량</label>
+      <input type="number" id="item4" placeholder="0" />
+    </div>
 
-  <div class="suit-reference">
-    슈트 번호 참조: 1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ, 11=CA, 12=JE, 13=CJ롯데, 14=CJ롯데
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>상품명</th>
+          <th>수량</th>
+          <th>총합</th>
+        </tr>
+      </thead>
+      <tbody id="resultBody">
+        <tr><td>삼다수 2L</td><td id="r1">0</td><td id="t1">0</td></tr>
+        <tr><td>삼다수 500ml</td><td id="r2">0</td><td id="t2">0</td></tr>
+        <tr><td>백산수 2L</td><td id="r3">0</td><td id="t3">0</td></tr>
+        <tr><td>백산수 500ml</td><td id="r4">0</td><td id="t4">0</td></tr>
+      </tbody>
+    </table>
+
+    <button class="download-btn" onclick="downloadCSV()">결과 다운로드</button>
   </div>
-
-  <label for="count">정상분기 건수</label>
-  <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
-
-  <label>지시 슈트/권역 입력</label>
-  <div id="orderInputsContainer"></div>
-
-  <label for="errorInfo">오분기 슈트/권역 (예: 리젝)</label>
-  <input type="text" id="errorInfo" placeholder="예: 리젝" value="리젝" />
-
-  <label for="time">발생 시각</label>
-  <input type="text" id="time" placeholder="예: 16:19" />
-
-  <label>멘션 선택 (복사 시 포함)</label>
-  <div class="mention-list" id="mentionList">
-    <label><input type="checkbox" class="mentionCheckbox" value="@손종선[평택HUB]" checked> @손종선[평택HUB]</label>
-    <label><input type="checkbox" class="mentionCheckbox" value="@신직호[평택HUB_분류]" checked> @신직호[평택HUB_분류]</label>
-    <label><input type="checkbox" class="mentionCheckbox" value="@김남일[평택 HUB _ SIOC]" checked> @김남일[평택 HUB _ SIOC]</label>
-    <label><input type="checkbox" class="mentionCheckbox" value="@권미선[평택HUB_SIOC]" checked> @권미선[평택HUB_SIOC]</label>
-    <label><input type="checkbox" class="mentionCheckbox" value="@홍지호 [FC자동화설비]" checked> @홍지호 [FC자동화설비]</label>
-  </div>
-
-  <div class="output" id="outputBox"></div>
-
-  <button id="copyBtn">복사하기</button>
-  <button id="saveImageBtn">결과표 이미지 저장</button>
-  <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
-    const countInput = document.getElementById('count');
-    const orderInputsContainer = document.getElementById('orderInputsContainer');
-    const errorInfoInput = document.getElementById('errorInfo');
-    const timeInput = document.getElementById('time');
-    const outputBox = document.getElementById('outputBox');
-    const copyBtn = document.getElementById('copyBtn');
-    const saveImageBtn = document.getElementById('saveImageBtn');
-    const copySuccess = document.getElementById('copySuccess');
+    const items = [
+      { id: 'item1', resultId: 'r1', totalId: 't1' },
+      { id: 'item2', resultId: 'r2', totalId: 't2' },
+      { id: 'item3', resultId: 'r3', totalId: 't3' },
+      { id: 'item4', resultId: 'r4', totalId: 't4' },
+    ];
 
-    function createOrderInputs(n) {
-      orderInputsContainer.innerHTML = '';
-      for (let i = 0; i < n; i++) {
-        const div = document.createElement('div');
-        div.className = 'dynamic-input-group';
-
-        const suitInput = document.createElement('input');
-        suitInput.type = 'number';
-        suitInput.min = '1';
-        suitInput.placeholder = '예) 1';
-        suitInput.className = 'suitInput';
-
-        const zoneInput = document.createElement('input');
-        zoneInput.type = 'text';
-        zoneInput.placeholder = '예) M';
-        zoneInput.maxLength = 2;
-        zoneInput.className = 'zoneInput';
-
-        div.appendChild(suitInput);
-        div.appendChild(zoneInput);
-
-        orderInputsContainer.appendChild(div);
-      }
-    }
-
-    function updateOutput() {
-      const count = parseInt(countInput.value) || 1;
-      const suitInputs = orderInputsContainer.querySelectorAll('.suitInput');
-      const zoneInputs = orderInputsContainer.querySelectorAll('.zoneInput');
-      const orderPairs = [];
-
-      for (let i = 0; i < count; i++) {
-        const suit = suitInputs[i]?.value.trim();
-        let zone = zoneInputs[i]?.value.trim();
-        if (suit === '' && zone === '') continue;
-        if (zone) zone = zone.replace(/\s+/g, '') + '권역';
-
-        let pair = '';
-        if (suit) pair += suit + '번';
-        if (zone) pair += ' ' + zone;
-        orderPairs.push(pair.trim());
-      }
-
-      const ordersText = orderPairs.join(' / ') || ' ';
-      const errorInfo = errorInfoInput.value.trim() || '리젝';
-      const time = timeInput.value.trim();
-      const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
-
-      const text = `정상분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${ordersText}
-오분기 슈트 : ${errorInfo}
-발생시각 : ${time} 분경
-
-${mentions}`;
-
-      outputBox.textContent = text;
-      copySuccess.style.display = 'none';
-    }
-
-    function copyToClipboard() {
-      updateOutput();
-      const text = outputBox.textContent;
-      if (!text.trim()) return alert("복사할 내용이 없습니다.");
-
-      navigator.clipboard.writeText(text).then(() => {
-        copySuccess.style.display = 'block';
-        setTimeout(() => copySuccess.style.display = 'none', 2000);
-      }).catch(() => {
-        alert("복사 실패! 수동으로 복사해 주세요.");
-      });
-    }
-
-    function saveOutputAsImage() {
-      html2canvas(document.getElementById("outputBox")).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "정상분기_결과표.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      }).catch(() => {
-        alert("이미지 저장에 실패했습니다.");
-      });
-    }
-
-    countInput.addEventListener('input', () => {
-      const n = parseInt(countInput.value);
-      createOrderInputs(isNaN(n) || n < 1 ? 1 : n);
-      updateOutput();
+    items.forEach(item => {
+      document.getElementById(item.id).addEventListener('input', updateResults);
     });
 
-    orderInputsContainer.addEventListener('input', updateOutput);
-    errorInfoInput.addEventListener('input', updateOutput);
-    timeInput.addEventListener('input', updateOutput);
-    document.getElementById('mentionList').addEventListener('change', updateOutput);
-    copyBtn.addEventListener('click', copyToClipboard);
-    saveImageBtn.addEventListener('click', saveOutputAsImage);
+    function updateResults() {
+      items.forEach(item => {
+        const val = parseInt(document.getElementById(item.id).value) || 0;
+        document.getElementById(item.resultId).textContent = val;
+        document.getElementById(item.totalId).textContent = val * 1; // 필요한 경우 계산 추가 가능
+      });
+    }
 
-    window.onload = () => {
-      createOrderInputs(1);
-      updateOutput();
-    };
+    function downloadCSV() {
+      let csv = '상품명,수량,총합\n';
+      items.forEach((item, idx) => {
+        const name = document.querySelector(`#resultBody tr:nth-child(${idx+1}) td:first-child`).textContent;
+        const qty = document.getElementById(item.resultId).textContent;
+        const total = document.getElementById(item.totalId).textContent;
+        csv += `${name},${qty},${total}\n`;
+      });
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', '계산결과.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>
