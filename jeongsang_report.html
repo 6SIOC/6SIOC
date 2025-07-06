@@ -168,11 +168,17 @@
 
       for(let i=0; i < count; i++){
         const suit = suitInputs[i]?.value.trim();
-        const zone = zoneInputs[i]?.value.trim();
+        let zone = zoneInputs[i]?.value.trim();
         if(suit === '' && zone === '') continue;
+
+        // 권역 입력 띄어쓰기 제거 (ex. "M 권역" -> "M권역")
+        if(zone) {
+          zone = zone.replace(/\s+/g, '') + '권역';
+        }
+
         let pair = '';
         if(suit) pair += suit + '번';
-        if(zone) pair += ' ' + zone + ' 권역';
+        if(zone) pair += ' ' + zone;
         orderPairs.push(pair.trim());
       }
       const ordersText = orderPairs.join(' / ') || ' ';
