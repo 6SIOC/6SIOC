@@ -144,8 +144,15 @@
     const copySuccess = document.getElementById("copySuccess");
     const mentionCheckboxes = document.getElementById("mentionCheckboxes");
 
+    // 10 이하 숫자는 0 없이 그대로, 그 이상은 그냥 문자열로 반환
+    function formatPNumber(num) {
+      const n = Number(num);
+      if (n <= 10) return n.toString();
+      return n.toString();
+    }
+
     // 멘션 체크박스 생성
-    mentions.forEach((text, index) => {
+    mentions.forEach((text) => {
       const label = document.createElement("label");
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
@@ -157,17 +164,13 @@
       mentionCheckboxes.appendChild(label);
     });
 
-    function padNumber(num, length = 2) {
-      return num.toString().padStart(length, "0");
-    }
-
     function getSelectedMentions() {
       const checked = mentionCheckboxes.querySelectorAll("input:checked");
       return Array.from(checked).map(cb => cb.value).join("\n");
     }
 
     function updateResult() {
-      const p = pInput.value ? padNumber(pInput.value) + "P" : "○○P";
+      const p = pInput.value ? formatPNumber(pInput.value) + "P" : "○○P";
       const time = timeInput.value.trim() || "○○:○○";
       const mention = getSelectedMentions();
       resultText.textContent = `6층 SIOC 직배 2회차 ${p} 상차후 ${time} 1층으로 내려갑니다.\n\n\n${mention}`;
@@ -194,4 +197,3 @@
   </script>
 </body>
 </html>
-
