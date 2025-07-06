@@ -20,6 +20,7 @@
       margin-bottom: 10px;
     }
 
+    /* 슈트 번호 참조 박스: 항상 잘 보이도록 최상단 배치 */
     .suit-reference {
       display: block !important;
       margin-bottom: 20px;
@@ -30,6 +31,8 @@
       font-size: 15px;
       color: #3a0066;
       line-height: 1.6;
+      user-select: text;
+      word-break: keep-all;
     }
 
     label {
@@ -57,6 +60,7 @@
       background-color: #faf5ff;
       font-size: 15px;
       color: #5f0080;
+      user-select: text;
     }
 
     .mention-list label {
@@ -93,6 +97,8 @@
       white-space: pre-wrap;
       min-height: 140px;
       user-select: text;
+      font-family: monospace;
+      font-size: 14px;
     }
 
     button {
@@ -105,6 +111,10 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a009d;
     }
 
     .copy-success {
@@ -113,6 +123,7 @@
       text-align: center;
       margin-top: 10px;
       display: none;
+      user-select: none;
     }
   </style>
 </head>
@@ -120,7 +131,7 @@
 
   <h1>정상분기 보고서</h1>
 
-  <!-- ✅ 보이도록 확실히 배치한 슈트 참조 박스 -->
+  <!-- 슈트 번호 참조 박스: 최상단, 확실히 보임 -->
   <div class="suit-reference" aria-label="슈트 번호 참조">
     🧾 <strong>슈트 번호 참조:</strong><br>
     1=Y, 2=Y, 3=U, 4=H, 5=M, 6=H, 7=PT, 8=CS, 9=GW, 10=DJ,<br>
@@ -148,7 +159,7 @@
     <label><input type="checkbox" class="mentionCheckbox" value="@홍지호 [FC자동화설비]" checked> @홍지호 [FC자동화설비]</label>
   </div>
 
-  <div class="output" id="outputBox"></div>
+  <div class="output" id="outputBox" aria-live="polite" aria-atomic="true"></div>
 
   <button id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
@@ -162,6 +173,7 @@
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
 
+    // 지시 슈트/권역 입력 박스 생성
     function createOrderInputs(n) {
       orderInputsContainer.innerHTML = '';
       for (let i = 0; i < n; i++) {
@@ -187,6 +199,7 @@
       }
     }
 
+    // 출력 텍스트 생성 및 표시
     function updateOutput() {
       const count = parseInt(countInput.value) || 1;
 
@@ -197,7 +210,7 @@
       for (let i = 0; i < count; i++) {
         const suit = suitInputs[i]?.value.trim();
         let zone = zoneInputs[i]?.value.trim();
-        if (suit === '' && zone === '') continue;
+        if (!suit && !zone) continue;
 
         if (zone) {
           zone = zone.replace(/\s+/g, '') + '권역';
@@ -209,12 +222,12 @@
         orderPairs.push(pair.trim());
       }
 
-      const ordersText = orderPairs.join(' / ') || ' ';
+      const ordersText = orderPairs.length ? orderPairs.join(' / ') : ' ';
       const errorInfo = errorInfoInput.value.trim() || '리젝';
-      const time = timeInput.value.trim();
+      const time = timeInput.value.trim() || '미입력';
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
-      const text = `정상분기건 ${count}건 발생하였습니다.
+      const text = `정상분기건 ${orderPairs.length}건 발생하였습니다.
 지시 슈트 : ${ordersText}
 오분기 슈트 : ${errorInfo}
 발생시각 : ${time} 분경
@@ -225,10 +238,14 @@ ${mentions}`;
       copySuccess.style.display = 'none';
     }
 
+    // 복사 기능
     function copyToClipboard() {
       updateOutput();
       const text = outputBox.textContent;
-      if (!text.trim()) return alert("복사할 내용이 없습니다.");
+      if (!text.trim()) {
+        alert("복사할 내용이 없습니다.");
+        return;
+      }
 
       navigator.clipboard.writeText(text).then(() => {
         copySuccess.style.display = 'block';
@@ -240,6 +257,7 @@ ${mentions}`;
       });
     }
 
+    // 이벤트 연결
     countInput.addEventListener('input', () => {
       let n = parseInt(countInput.value);
       if (isNaN(n) || n < 1) n = 1;
@@ -253,6 +271,7 @@ ${mentions}`;
     document.getElementById('mentionList').addEventListener('change', updateOutput);
     copyBtn.addEventListener('click', copyToClipboard);
 
+    // 초기 로드 시
     window.onload = () => {
       createOrderInputs(parseInt(countInput.value) || 1);
       updateOutput();
