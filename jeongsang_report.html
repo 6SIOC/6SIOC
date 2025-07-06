@@ -33,14 +33,6 @@
       box-sizing: border-box;
       margin-bottom: 10px;
     }
-    .dynamic-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .dynamic-group input {
-      flex: 1;
-    }
     .mention-list {
       margin-top: 10px;
       border: 1px solid #5f0080;
@@ -55,10 +47,21 @@
       align-items: center;
       gap: 6px;
       margin-bottom: 6px;
+      cursor: pointer;
+      user-select: none;
     }
     .mention-list input[type="checkbox"] {
       width: 16px;
       height: 16px;
+      cursor: pointer;
+    }
+    .dynamic-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dynamic-input-group input {
+      flex: 1;
     }
     .output {
       margin-top: 20px;
@@ -81,6 +84,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      user-select: none;
     }
     .copy-success {
       color: green;
@@ -97,10 +101,11 @@
   <label for="count">정상분기 건수</label>
   <input type="number" id="count" placeholder="예: 1" min="1" value="1" />
 
+  <label>지시 슈트/권역 입력</label>
   <div id="orderInputsContainer"></div>
 
   <label for="errorInfo">오분기 슈트/권역 (예: 리젝)</label>
-  <input type="text" id="errorInfo" placeholder="예: 리젝" />
+  <input type="text" id="errorInfo" placeholder="예: 리젝" value="리젝" />
 
   <label for="time">발생 시각</label>
   <input type="text" id="time" placeholder="예: 16:19" />
@@ -116,88 +121,107 @@
 
   <div class="output" id="outputBox"></div>
 
-  <button onclick="copyToClipboard()">복사하기</button>
+  <button id="copyBtn">복사하기</button>
   <div class="copy-success" id="copySuccess">복사되었습니다!</div>
 
   <script>
-    const orderInputsContainer = document.getElementById('orderInputsContainer');
     const countInput = document.getElementById('count');
+    const orderInputsContainer = document.getElementById('orderInputsContainer');
+    const errorInfoInput = document.getElementById('errorInfo');
+    const timeInput = document.getElementById('time');
+    const outputBox = document.getElementById('outputBox');
+    const copyBtn = document.getElementById('copyBtn');
+    const copySuccess = document.getElementById('copySuccess');
 
     function createOrderInputs(n) {
       orderInputsContainer.innerHTML = '';
       for (let i = 0; i < n; i++) {
-        const group = document.createElement('div');
-        group.className = 'dynamic-group';
+        const div = document.createElement('div');
+        div.className = 'dynamic-input-group';
 
         const suitInput = document.createElement('input');
-        suitInput.type = 'text';
-        suitInput.placeholder = `예: 1`;
-        suitInput.classList.add('suitInput');
+        suitInput.type = 'number';
+        suitInput.min = '1';
+        suitInput.placeholder = '예) 1';
+        suitInput.className = 'suitInput';
 
         const zoneInput = document.createElement('input');
         zoneInput.type = 'text';
-        zoneInput.placeholder = `예: M`;
-        zoneInput.classList.add('zoneInput');
+        zoneInput.placeholder = '예) M';
+        zoneInput.maxLength = 2;
+        zoneInput.className = 'zoneInput';
 
-        group.appendChild(suitInput);
-        group.appendChild(zoneInput);
-        orderInputsContainer.appendChild(group);
+        div.appendChild(suitInput);
+        div.appendChild(zoneInput);
+
+        orderInputsContainer.appendChild(div);
       }
     }
 
     function updateOutput() {
-      const count = document.getElementById('count').value.trim() || '1';
+      const count = parseInt(countInput.value) || 1;
 
-      const suits = Array.from(document.querySelectorAll('.suitInput')).map(input => input.value.trim());
-      const zones = Array.from(document.querySelectorAll('.zoneInput')).map(input => input.value.trim());
+      // 지시 슈트/권역 값 모으기
+      const suitInputs = orderInputsContainer.querySelectorAll('.suitInput');
+      const zoneInputs = orderInputsContainer.querySelectorAll('.zoneInput');
+      const orderPairs = [];
 
-      const combinedOrders = suits.map((suit, i) => {
-        const zone = zones[i] || '';
-        return suit && zone ? `${suit} ${zone}` : '';
-      }).filter(Boolean).join(' / ');
+      for(let i=0; i < count; i++){
+        const suit = suitInputs[i]?.value.trim();
+        const zone = zoneInputs[i]?.value.trim();
+        if(suit === '' && zone === '') continue;
+        let pair = '';
+        if(suit) pair += suit + '번';
+        if(zone) pair += ' ' + zone + ' 권역';
+        orderPairs.push(pair.trim());
+      }
+      const ordersText = orderPairs.join(' / ') || ' ';
 
-      const errorInfo = document.getElementById('errorInfo').value.trim();
-      const time = document.getElementById('time').value.trim();
+      const errorInfo = errorInfoInput.value.trim() || '리젝';
+      const time = timeInput.value.trim();
+
+      // 선택된 멘션들
       const mentions = Array.from(document.querySelectorAll('.mentionCheckbox:checked')).map(cb => cb.value).join(' ');
 
       const text = `정상분기건 ${count}건 발생하였습니다.
-지시 슈트 : ${combinedOrders}
+지시 슈트 : ${ordersText}
 오분기 슈트 : ${errorInfo}
 발생시각 : ${time} 분경
 
 ${mentions}`;
 
-      document.getElementById('outputBox').textContent = text;
-      document.getElementById('copySuccess').style.display = 'none';
+      outputBox.textContent = text;
+      copySuccess.style.display = 'none';
     }
 
     function copyToClipboard() {
       updateOutput();
-      const text = document.getElementById('outputBox').textContent;
-      if (!text.trim()) return alert("복사할 내용이 없습니다.");
+      const text = outputBox.textContent;
+      if(!text.trim()) return alert("복사할 내용이 없습니다.");
 
       navigator.clipboard.writeText(text).then(() => {
-        document.getElementById('copySuccess').style.display = 'block';
+        copySuccess.style.display = 'block';
         setTimeout(() => {
-          document.getElementById('copySuccess').style.display = 'none';
+          copySuccess.style.display = 'none';
         }, 2000);
       }).catch(() => {
         alert("복사 실패! 수동으로 복사해 주세요.");
       });
     }
 
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', updateOutput);
-    });
-
-    document.getElementById('mentionList').addEventListener('change', updateOutput);
     countInput.addEventListener('input', () => {
-      const count = parseInt(countInput.value) || 1;
-      createOrderInputs(count);
+      let n = parseInt(countInput.value);
+      if(isNaN(n) || n < 1) n = 1;
+      createOrderInputs(n);
       updateOutput();
     });
 
-    // 초기 실행
+    orderInputsContainer.addEventListener('input', updateOutput);
+    errorInfoInput.addEventListener('input', updateOutput);
+    timeInput.addEventListener('input', updateOutput);
+    document.getElementById('mentionList').addEventListener('change', updateOutput);
+    copyBtn.addEventListener('click', copyToClipboard);
+
     window.onload = () => {
       createOrderInputs(parseInt(countInput.value) || 1);
       updateOutput();
