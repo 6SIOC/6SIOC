@@ -146,12 +146,15 @@
     const copyBtn = document.getElementById('copyBtn');
     const copySuccess = document.getElementById('copySuccess');
 
-    function padNumber(num, length = 2) {
-      return num.toString().padStart(length, '0');
+    // P값 포맷 (10 이하 단위는 0 없이 숫자만 표기)
+    function formatPNumber(num) {
+      const n = Number(num);
+      if (n <= 10) return n.toString();
+      return n.toString();
     }
 
     function updateResult() {
-      const pVal = pInput.value ? padNumber(pInput.value) + 'P' : '○○P';
+      const pVal = pInput.value ? formatPNumber(pInput.value) + 'P' : '○○P';
       const timeVal = timeInput.value.trim() || '○○:○○';
       resultText.textContent = `6층 SIOC 직배 1회차 ${pVal} 상차후 ${timeVal} 1층으로 내려갑니다.`;
 
