@@ -122,8 +122,7 @@
   <input type="number" id="countInput" min="1" max="10" value="1" />
 
   <div id="sheetInputsContainer">
-    <label>지시 슈트 1 (예: 2번 Y권역 1건)</label>
-    <input type="text" class="sheetInput" placeholder="예: 2번 Y권역 1건" />
+    <!-- 동적 지시 슈트 입력란들 -->
   </div>
 
   <label for="rejectedSuitInput">오분기 슈트</label>
@@ -170,10 +169,8 @@
 
   // 동적으로 지시 슈트 입력란 생성 함수
   function createSheetInputs(num) {
-    // 기존 input들 제거
-    while (sheetInputsContainer.firstChild) {
-      sheetInputsContainer.removeChild(sheetInputsContainer.firstChild);
-    }
+    sheetInputsContainer.innerHTML = ''; // 기존 input 모두 제거
+
     for (let i = 1; i <= num; i++) {
       const label = document.createElement('label');
       label.textContent = `지시 슈트 ${i} (예: 2번 Y권역 1건)`;
@@ -212,8 +209,8 @@ ${mentionsText}`;
     copySuccess.style.display = 'none';
   }
 
-  // 이벤트 리스너 등록
-  countInput.addEventListener('input', () => {
+  // countInput 변경 시 (입력 완료 후) 동작하도록 change 이벤트 사용
+  countInput.addEventListener('change', () => {
     let val = parseInt(countInput.value);
     if (isNaN(val) || val < 1) val = 1;
     if (val > 10) val = 10;
@@ -249,4 +246,3 @@ ${mentionsText}`;
 </script>
 </body>
 </html>
-
