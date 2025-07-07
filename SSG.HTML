@@ -2,147 +2,268 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>상품별 계산기</title>
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
-      color: #333;
+    html, body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
     }
     h1 {
       text-align: center;
-      color: #5f0080;
+      padding: 20px 0;
+      margin: 0;
     }
-    .calculator-container {
-      max-width: 480px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
+    .calc-group {
+      width: 90%;
+      max-width: 320px;
+      margin: 0 auto 30px auto;
+      background: #ffffff;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      touch-action: manipulation;
     }
-    .item-group {
-      margin-bottom: 16px;
-    }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 4px;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    .result-table {
-      margin-top: 20px;
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-    }
-    .result-table th, .result-table td {
-      padding: 10px;
-      border: 1px solid #ddd;
+    .calc-group h3 {
       text-align: center;
+      margin: 0 0 16px;
+      font-size: 1.1em;
     }
-    .result-table th {
-      background-color: #f3e8ff;
-      color: #5f0080;
+    .display {
+      width: 100%;
+      font-size: 1.6em;
+      font-weight: bold;
+      padding: 10px 14px;
+      text-align: left;
+      border: none;
+      background: #f0f0f0;
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      overflow-x: visible;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 180px;
+      line-height: 1.6em;
     }
-    .download-btn {
-      display: block;
-      margin: 20px auto 0;
-      padding: 10px 20px;
-      background-color: #5f0080;
-      color: white;
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    button {
+      font-size: 1.3em;
+      padding: 14px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      background-color: #e0e0e0;
+      color: #000;
       cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background-color 0.2s ease;
     }
+    button.operator { background-color: #4caf50; color: white; }
+    button.clear { background-color: #f44336; color: white; }
+    button.equal { background-color: #2196f3; color: white; grid-column: 4; }
+    button.zero { grid-column: span 2; }
+
+    table {
+      width: 90%;
+      max-width: 360px;
+      margin: 0 auto 40px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th { background-color: #eee; }
   </style>
 </head>
 <body>
+
   <h1>상품별 계산기</h1>
-  <div class="calculator-container">
-    <div class="item-group">
-      <label for="item1">삼다수 2L 수량</label>
-      <input type="number" id="item1" placeholder="0" />
-    </div>
-    <div class="item-group">
-      <label for="item2">삼다수 500ml 수량</label>
-      <input type="number" id="item2" placeholder="0" />
-    </div>
-    <div class="item-group">
-      <label for="item3">백산수 2L 수량</label>
-      <input type="number" id="item3" placeholder="0" />
-    </div>
-    <div class="item-group">
-      <label for="item4">백산수 500ml 수량</label>
-      <input type="number" id="item4" placeholder="0" />
-    </div>
 
-    <table class="result-table">
-      <thead>
-        <tr>
-          <th>상품명</th>
-          <th>수량</th>
-          <th>총합</th>
-        </tr>
-      </thead>
-      <tbody id="resultBody">
-        <tr><td>삼다수 2L</td><td id="r1">0</td><td id="t1">0</td></tr>
-        <tr><td>삼다수 500ml</td><td id="r2">0</td><td id="t2">0</td></tr>
-        <tr><td>백산수 2L</td><td id="r3">0</td><td id="t3">0</td></tr>
-        <tr><td>백산수 500ml</td><td id="r4">0</td><td id="t4">0</td></tr>
-      </tbody>
-    </table>
-
-    <button class="download-btn" onclick="downloadCSV()">결과 다운로드</button>
+  <!-- 계산기 4개 -->
+  <div class="calc-group" id="calc1">
+    <h3>삼다수 2L</h3>
+    <textarea id="display1" class="display" spellcheck="false"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button>
+      <button class="operator">%</button>
+      <button class="clear">←</button>
+      <button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
   </div>
 
+  <div class="calc-group" id="calc2">
+    <h3>삼다수 500ML</h3>
+    <textarea id="display2" class="display" spellcheck="false"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+
+  <div class="calc-group" id="calc3">
+    <h3>지리산 2L</h3>
+    <textarea id="display3" class="display" spellcheck="false"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+
+  <div class="calc-group" id="calc4">
+    <h3>지리산 500ML</h3>
+    <textarea id="display4" class="display" spellcheck="false"></textarea>
+    <div class="buttons">
+      <button class="clear">C</button><button class="operator">%</button><button class="clear">←</button><button class="operator">÷</button>
+      <button>7</button><button>8</button><button>9</button><button class="operator">×</button>
+      <button>4</button><button>5</button><button>6</button><button class="operator">−</button>
+      <button>1</button><button>2</button><button>3</button><button class="operator">+</button>
+      <button class="zero">0</button><button>.</button><button class="equal">=</button>
+    </div>
+  </div>
+
+  <table id="resultTable">
+    <thead><tr><th>상품</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>삼다수 2L</td><td id="res1"></td></tr>
+      <tr><td>삼다수 500ML</td><td id="res2"></td></tr>
+      <tr><td>지리산 2L</td><td id="res3"></td></tr>
+      <tr><td>지리산 500ML</td><td id="res4"></td></tr>
+    </tbody>
+  </table>
+
   <script>
-    const items = [
-      { id: 'item1', resultId: 'r1', totalId: 't1' },
-      { id: 'item2', resultId: 'r2', totalId: 't2' },
-      { id: 'item3', resultId: 'r3', totalId: 't3' },
-      { id: 'item4', resultId: 'r4', totalId: 't4' },
-    ];
+    const lastPress = new WeakMap();
 
-    items.forEach(item => {
-      document.getElementById(item.id).addEventListener('input', updateResults);
-    });
+    function handlePress(e) {
+      e.preventDefault();
+      const btn = e.currentTarget;
+      const now = Date.now();
+      if (lastPress.has(btn) && now - lastPress.get(btn) < 100) return;
+      lastPress.set(btn, now);
 
-    function updateResults() {
-      items.forEach(item => {
-        const val = parseInt(document.getElementById(item.id).value) || 0;
-        document.getElementById(item.resultId).textContent = val;
-        document.getElementById(item.totalId).textContent = val * 1; // 필요한 경우 계산 추가 가능
+      const group = btn.closest('.calc-group');
+      const id = group.id.replace('calc','');
+      const disp = document.getElementById('display'+id);
+      const txt = btn.textContent;
+
+      if (btn.classList.contains('clear') && txt==='C') { 
+        disp.value = ''; 
+        updateResult(id, ''); 
+        autoResizeTextarea(disp);
+        return; 
+      }
+      if (btn.classList.contains('clear') && txt==='←') { 
+        disp.value = disp.value.slice(0, -1); 
+        updateResult(id, ''); 
+        autoResizeTextarea(disp);
+        return; 
+      }
+      if (btn.classList.contains('equal')) { 
+        doCalc(id); 
+        return; 
+      }
+
+      let v = txt;
+      if (v === '÷') v = '/';
+      else if (v === '×') v = 'X';
+      else if (v === '−') v = '-';
+
+      disp.selectionStart = disp.selectionEnd = disp.value.length;
+      disp.value += v;
+      autoResizeTextarea(disp);
+    }
+
+    function doCalc(id) {
+      const d = document.getElementById('display'+id);
+      let expr = d.value;
+      let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
+
+      let result;
+      try { 
+        result = eval(js); 
+        result = Math.round(result * 100) / 100; 
+      } catch { 
+        result = '오류'; 
+      }
+
+      d.value = expr + '=' + result;
+      updateResult(id, result);
+      autoResizeTextarea(d);
+    }
+
+    function updateResult(id, val) { 
+      document.getElementById('res'+id).textContent = val; 
+    }
+
+    function autoResizeTextarea(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    function setup() {
+      document.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', handlePress);
+        b.addEventListener('touchstart', handlePress, { passive: false });
+      });
+
+      document.querySelectorAll('.display').forEach(textarea => {
+        textarea.addEventListener('input', () => {
+          const id = textarea.id.replace('display','');
+          let expr = textarea.value;
+
+          if (expr.includes('*')) {
+            expr = expr.replace(/\*/g, 'X');
+            textarea.value = expr;
+          }
+
+          let js = expr.replace(/X/g, '*').replace(/(\d+)%/g, '($1/100)');
+
+          let result;
+          try {
+            result = eval(js);
+            result = Math.round(result * 100) / 100;
+          } catch {
+            result = '오류';
+          }
+
+          updateResult(id, result);
+          autoResizeTextarea(textarea);
+        });
+
+        autoResizeTextarea(textarea);
       });
     }
 
-    function downloadCSV() {
-      let csv = '상품명,수량,총합\n';
-      items.forEach((item, idx) => {
-        const name = document.querySelector(`#resultBody tr:nth-child(${idx+1}) td:first-child`).textContent;
-        const qty = document.getElementById(item.resultId).textContent;
-        const total = document.getElementById(item.totalId).textContent;
-        csv += `${name},${qty},${total}\n`;
-      });
-      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', '계산결과.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    window.onload = setup;
   </script>
+
 </body>
 </html>
